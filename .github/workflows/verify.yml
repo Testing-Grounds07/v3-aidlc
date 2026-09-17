@@ -8,18 +8,15 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_USER: v3
-          POSTGRES_PASSWORD: v3
-          POSTGRES_DB: v3_aidlc
-        ports: ['5432:5432']
     env:
       DATABASE_URL: postgresql://v3:v3@127.0.0.1:5432/v3_aidlc?schema=public
     steps:
       - uses: actions/checkout@v4
+      - name: Start PostgreSQL
+        run: |
+          sudo systemctl start postgresql.service
+          sudo -u postgres psql -c "CREATE USER v3 WITH PASSWORD 'v3';"
+          sudo -u postgres createdb --owner=v3 v3_aidlc
       - uses: pnpm/action-setup@v4
         with: { version: 11.19.0 }
       - uses: actions/setup-node@v4
