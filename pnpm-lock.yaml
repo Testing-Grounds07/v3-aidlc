@@ -40,6 +40,9 @@ importers:
       '@v3/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@v3/governance':
+        specifier: workspace:*
+        version: link:../../packages/governance
       '@v3/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -129,6 +132,12 @@ importers:
       '@v3/workspace':
         specifier: workspace:*
         version: link:../workspace
+
+  packages/governance:
+    dependencies:
+      zod:
+        specifier: ^4.1.5
+        version: 4.6.5
 
   packages/orchestration:
     dependencies:

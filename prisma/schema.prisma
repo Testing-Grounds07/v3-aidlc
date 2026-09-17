@@ -53,25 +53,28 @@ enum WorkPackageStatus {
 }
 
 model Project {
-  id             String                   @id
-  name           String
-  description    String
-  status         ProjectStatus            @default(ACTIVE)
-  version        Int                      @default(1)
-  createdAt      DateTime                 @default(now())
-  updatedAt      DateTime                 @updatedAt
-  requirements   Requirement[]
-  plans          Plan[]
-  workPackages   WorkPackage[]
-  events         LifecycleEvent[]
-  repositories   RepositoryRegistration[]
-  investigations Investigation[]
-  agentRuns      AgentRun[]
-  evidence       EvidenceRecord[]
-  gateDecisions  GateDecision[]
-  worktrees      WorktreeSession[]
-  proposals      ChangeProposal[]
-  pullRequests   GitHubPullRequest[]
+  id               String                   @id
+  name             String
+  description      String
+  status           ProjectStatus            @default(ACTIVE)
+  version          Int                      @default(1)
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+  requirements     Requirement[]
+  plans            Plan[]
+  workPackages     WorkPackage[]
+  events           LifecycleEvent[]
+  repositories     RepositoryRegistration[]
+  investigations   Investigation[]
+  agentRuns        AgentRun[]
+  evidence         EvidenceRecord[]
+  gateDecisions    GateDecision[]
+  worktrees        WorktreeSession[]
+  proposals        ChangeProposal[]
+  pullRequests     GitHubPullRequest[]
+  decisionRequests DecisionRequest[]
+  humanDecisions   HumanDecision[]
+  delegations      StandingDelegation[]
 }
 
 model Requirement {
@@ -333,4 +336,59 @@ model GitHubPullRequest {
   @@unique([repository, number])
   @@index([projectId, state])
   @@index([workPackageId, createdAt])
+}
+
+model DecisionRequest {
+  id                  String         @id
+  projectId           String
+  project             Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  actionId            String
+  headline            String
+  explanation         String
+  impact              String
+  actionNeeded        String
+  question            String
+  options             Json
+  recommendedOptionId String?
+  unaffectedWork      String
+  status              String         @default("pending")
+  requestedAt         DateTime
+  createdAt           DateTime       @default(now())
+  decision            HumanDecision?
+
+  @@index([projectId, status, requestedAt])
+}
+
+model HumanDecision {
+  id                String          @id
+  projectId         String
+  project           Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  decisionRequestId String          @unique
+  decisionRequest   DecisionRequest @relation(fields: [decisionRequestId], references: [id], onDelete: Cascade)
+  selectedOptionId  String
+  userWords         String
+  submittedAt       DateTime
+  createdAt         DateTime        @default(now())
+
+  @@index([projectId, submittedAt])
+}
+
+model StandingDelegation {
+  id               String    @id
+  projectId        String
+  project          Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  grantedBy        String
+  actionTypes      String[]
+  targets          String[]
+  requiredEvidence String[]
+  policyVersion    String
+  userWords        String
+  grantedAt        DateTime
+  expiresAt        DateTime?
+  revokedAt        DateTime?
+  revocationWords  String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([projectId, revokedAt, expiresAt])
 }

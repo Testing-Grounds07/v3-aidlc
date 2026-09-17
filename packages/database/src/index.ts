@@ -543,4 +543,60 @@ export class ProjectRepository {
       });
     });
   }
+
+  async recordDecisionRequest(input: {
+    readonly id: string; readonly projectId: string; readonly actionId: string;
+    readonly headline: string; readonly explanation: string; readonly impact: string;
+    readonly actionNeeded: string; readonly question: string; readonly options: Prisma.InputJsonValue;
+    readonly recommendedOptionId?: string; readonly unaffectedWork: string; readonly requestedAt: Date;
+  }): Promise<void> {
+    await this.prisma.decisionRequest.create({ data: input });
+  }
+
+  async recordHumanDecision(input: {
+    readonly id: string; readonly projectId: string; readonly decisionRequestId: string;
+    readonly selectedOptionId: string; readonly userWords: string; readonly submittedAt: Date;
+  }): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.humanDecision.create({ data: input });
+      await tx.decisionRequest.update({ where: { id: input.decisionRequestId }, data: { status: 'resolved' } });
+      await tx.lifecycleEvent.create({
+        data: {
+          id: `EVT-${input.id}-RECORDED`, projectId: input.projectId,
+          type: 'human-decision.recorded', aggregateType: 'human-decision', aggregateId: input.id,
+          aggregateVersion: 1, payload: { decisionRequestId: input.decisionRequestId, selectedOptionId: input.selectedOptionId },
+        },
+      });
+    });
+  }
+
+  async recordStandingDelegation(input: {
+    readonly id: string; readonly projectId: string; readonly grantedBy: string;
+    readonly actionTypes: readonly string[]; readonly targets: readonly string[];
+    readonly requiredEvidence: readonly string[]; readonly policyVersion: string;
+    readonly userWords: string; readonly grantedAt: Date; readonly expiresAt?: Date;
+  }): Promise<void> {
+    await this.prisma.standingDelegation.create({
+      data: { ...input, actionTypes: [...input.actionTypes], targets: [...input.targets], requiredEvidence: [...input.requiredEvidence] },
+    });
+  }
+
+  async revokeStandingDelegation(input: {
+    readonly projectId: string; readonly delegationId: string; readonly revokedAt: Date; readonly userWords: string;
+  }): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.standingDelegation.updateMany({
+        where: { id: input.delegationId, projectId: input.projectId, revokedAt: null },
+        data: { revokedAt: input.revokedAt, revocationWords: input.userWords },
+      });
+      if (updated.count !== 1) throw new Error('Delegation is missing or already revoked');
+      await tx.lifecycleEvent.create({
+        data: {
+          id: `EVT-${input.delegationId}-REVOKED`, projectId: input.projectId,
+          type: 'delegation.revoked', aggregateType: 'standing-delegation', aggregateId: input.delegationId,
+          aggregateVersion: 2, payload: { revokedAt: input.revokedAt.toISOString() },
+        },
+      });
+    });
+  }
 }

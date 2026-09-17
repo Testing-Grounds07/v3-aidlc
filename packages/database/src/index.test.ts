@@ -175,4 +175,28 @@ describe.skipIf(!hasDatabase)('ProjectRepository PostgreSQL integration', () => 
       status: 'published', externalUrl: 'https://github.test/owner/repo/pull/1',
     });
   });
+
+  it('persists human decisions and immediately revokes standing authority', async () => {
+    await repository.recordDecisionRequest({
+      id: 'DR-M7-1', projectId, actionId: 'ACTION-DEPLOY', headline: 'Choose where to release',
+      explanation: 'The release affects other people.', impact: 'The choice controls exposure.',
+      actionNeeded: 'Choose one option.', question: 'Release to staging?',
+      options: [{ id: 'yes', label: 'Staging', tradeoff: 'Internal only.' }, { id: 'no', label: 'Stop', tradeoff: 'No release.' }],
+      recommendedOptionId: 'yes', unaffectedWork: 'Other work can continue.', requestedAt: new Date('2026-09-17T00:00:00Z'),
+    });
+    await repository.recordHumanDecision({
+      id: 'DEC-M7-1', projectId, decisionRequestId: 'DR-M7-1', selectedOptionId: 'yes',
+      userWords: 'Use staging.', submittedAt: new Date('2026-09-17T00:01:00Z'),
+    });
+    await repository.recordStandingDelegation({
+      id: 'DEL-M7-1', projectId, grantedBy: 'user-1', actionTypes: ['deploy'], targets: ['staging'],
+      requiredEvidence: ['EVID-M4-1'], policyVersion: '1.0.0', userWords: 'Deploy after checks pass.',
+      grantedAt: new Date('2026-09-17T00:01:00Z'),
+    });
+    await repository.revokeStandingDelegation({
+      projectId, delegationId: 'DEL-M7-1', revokedAt: new Date('2026-09-17T00:02:00Z'), userWords: 'Stop automatic deploys.',
+    });
+    expect(await prisma.decisionRequest.findUnique({ where: { id: 'DR-M7-1' } })).toMatchObject({ status: 'resolved' });
+    expect(await prisma.standingDelegation.findUnique({ where: { id: 'DEL-M7-1' } })).toMatchObject({ revocationWords: 'Stop automatic deploys.' });
+  });
 });
