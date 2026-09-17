@@ -53,32 +53,34 @@ enum WorkPackageStatus {
 }
 
 model Project {
-  id           String        @id
-  name         String
-  description  String
-  status       ProjectStatus @default(ACTIVE)
-  version      Int           @default(1)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  requirements Requirement[]
-  plans        Plan[]
-  workPackages WorkPackage[]
-  events       LifecycleEvent[]
-  repositories RepositoryRegistration[]
+  id             String                   @id
+  name           String
+  description    String
+  status         ProjectStatus            @default(ACTIVE)
+  version        Int                      @default(1)
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+  requirements   Requirement[]
+  plans          Plan[]
+  workPackages   WorkPackage[]
+  events         LifecycleEvent[]
+  repositories   RepositoryRegistration[]
   investigations Investigation[]
-  agentRuns     AgentRun[]
+  agentRuns      AgentRun[]
+  evidence       EvidenceRecord[]
+  gateDecisions  GateDecision[]
 }
 
 model Requirement {
-  id                 String                 @id
+  id                 String                @id
   projectId          String
-  project            Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project            Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
   title              String
   description        String
-  status             RequirementStatus      @default(DRAFT)
-  version            Int                    @default(1)
-  createdAt          DateTime               @default(now())
-  updatedAt          DateTime               @updatedAt
+  status             RequirementStatus     @default(DRAFT)
+  version            Int                   @default(1)
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
   acceptanceCriteria AcceptanceCriterion[]
 
   @@index([projectId])
@@ -115,26 +117,28 @@ model WorkPackage {
   id                   String            @id
   projectId            String
   project              Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  planId                String
-  plan                  Plan              @relation(fields: [planId], references: [id], onDelete: Cascade)
-  title                 String
-  objective             String
-  status                WorkPackageStatus @default(PROPOSED)
-  version               Int               @default(1)
-  intentIds             String[]
-  routeInstanceId       String?
-  workstreamId          String?
-  unitId                String?
-  boltId                String?
-  stage                 String
-  modeId                String?
-  posture               String
-  riskProfileId         String?
-  expectedOutcomeTypes  String[]
-  promotionTarget       String?
-  createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @updatedAt
-  agentRuns             AgentRun[]
+  planId               String
+  plan                 Plan              @relation(fields: [planId], references: [id], onDelete: Cascade)
+  title                String
+  objective            String
+  status               WorkPackageStatus @default(PROPOSED)
+  version              Int               @default(1)
+  intentIds            String[]
+  routeInstanceId      String?
+  workstreamId         String?
+  unitId               String?
+  boltId               String?
+  stage                String
+  modeId               String?
+  posture              String
+  riskProfileId        String?
+  expectedOutcomeTypes String[]
+  promotionTarget      String?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  agentRuns            AgentRun[]
+  evidence             EvidenceRecord[]
+  gateDecisions        GateDecision[]
 
   @@index([projectId])
   @@index([planId])
@@ -191,27 +195,67 @@ model Investigation {
 }
 
 model AgentRun {
-  id                 String      @id
-  projectId          String
-  project            Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  workPackageId      String
-  workPackage        WorkPackage @relation(fields: [workPackageId], references: [id], onDelete: Cascade)
-  adapterId          String
-  profileId          String
-  requestDigest      String
-  status             String
-  summary            String
-  artifactIds        String[]
-  evidenceIds        String[]
-  findingIds         String[]
-  satisfiedCriteria  String[]
-  usage              Json
-  providerResultRef  String
-  startedAt          DateTime
-  finishedAt         DateTime
-  createdAt          DateTime    @default(now())
+  id                String      @id
+  projectId         String
+  project           Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workPackageId     String
+  workPackage       WorkPackage @relation(fields: [workPackageId], references: [id], onDelete: Cascade)
+  adapterId         String
+  profileId         String
+  requestDigest     String
+  status            String
+  summary           String
+  artifactIds       String[]
+  evidenceIds       String[]
+  findingIds        String[]
+  satisfiedCriteria String[]
+  usage             Json
+  providerResultRef String
+  startedAt         DateTime
+  finishedAt        DateTime
+  createdAt         DateTime    @default(now())
 
   @@index([projectId, createdAt])
   @@index([workPackageId, createdAt])
   @@index([adapterId, status])
+}
+
+model EvidenceRecord {
+  id                        String      @id
+  projectId                 String
+  project                   Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workPackageId             String
+  workPackage               WorkPackage @relation(fields: [workPackageId], references: [id], onDelete: Cascade)
+  kind                      String
+  subjectRevision           String
+  producerId                String
+  producerRole              String
+  producerIndependenceGroup String
+  collectedAt               DateTime
+  locator                   String
+  sha256                    String
+  assertions                String[]
+  createdAt                 DateTime    @default(now())
+
+  @@index([projectId, createdAt])
+  @@index([workPackageId, subjectRevision])
+  @@index([sha256])
+}
+
+model GateDecision {
+  id            String      @id
+  projectId     String
+  project       Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workPackageId String
+  workPackage   WorkPackage @relation(fields: [workPackageId], references: [id], onDelete: Cascade)
+  revision      String
+  attempt       Int
+  outcome       String
+  promotable    Boolean
+  reasons       String[]
+  evidenceIds   String[]
+  createdAt     DateTime    @default(now())
+
+  @@unique([workPackageId, revision, attempt])
+  @@index([projectId, createdAt])
 }

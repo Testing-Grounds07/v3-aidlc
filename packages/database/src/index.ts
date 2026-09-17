@@ -406,4 +406,50 @@ export class ProjectRepository {
       });
     });
   }
+
+  async recordEvidence(input: {
+    readonly id: string;
+    readonly projectId: string;
+    readonly workPackageId: string;
+    readonly kind: string;
+    readonly subjectRevision: string;
+    readonly producerId: string;
+    readonly producerRole: string;
+    readonly producerIndependenceGroup: string;
+    readonly collectedAt: Date;
+    readonly locator: string;
+    readonly sha256: string;
+    readonly assertions: readonly string[];
+  }): Promise<void> {
+    await this.prisma.evidenceRecord.create({ data: { ...input, assertions: [...input.assertions] } });
+  }
+
+  async recordGateDecision(input: {
+    readonly id: string;
+    readonly projectId: string;
+    readonly workPackageId: string;
+    readonly revision: string;
+    readonly attempt: number;
+    readonly outcome: 'passed' | 'failed' | 'inconclusive';
+    readonly promotable: boolean;
+    readonly reasons: readonly string[];
+    readonly evidenceIds: readonly string[];
+  }): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.gateDecision.create({
+        data: { ...input, reasons: [...input.reasons], evidenceIds: [...input.evidenceIds] },
+      });
+      await tx.lifecycleEvent.create({
+        data: {
+          id: `EVT-${input.id}`,
+          projectId: input.projectId,
+          type: 'gate.evaluated',
+          aggregateType: 'gate-decision',
+          aggregateId: input.id,
+          aggregateVersion: 1,
+          payload: { workPackageId: input.workPackageId, revision: input.revision, outcome: input.outcome },
+        },
+      });
+    });
+  }
 }

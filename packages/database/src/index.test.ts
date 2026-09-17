@@ -130,4 +130,19 @@ describe.skipIf(!hasDatabase)('ProjectRepository PostgreSQL integration', () => 
     const run = await prisma.agentRun.findUniqueOrThrow({ where: { id: 'RUN-M3-1' } });
     expect(run).toMatchObject({ status: 'completed', adapterId: 'codex', evidenceIds: ['EVD-1'] });
   });
+
+  it('persists revision-bound evidence and the gate decision', async () => {
+    await repository.recordEvidence({
+      id: 'EVID-M4-1', projectId, workPackageId: 'WP-M1-1', kind: 'test_result',
+      subjectRevision: 'revision-m4', producerId: 'verification-engine', producerRole: 'verifier',
+      producerIndependenceGroup: 'deterministic-runtime', collectedAt: new Date('2026-09-17T00:00:02Z'),
+      locator: `sha256:${'d'.repeat(64)}`, sha256: 'd'.repeat(64), assertions: ['Unit tests: passed'],
+    });
+    await repository.recordGateDecision({
+      id: 'GATE-M4-1', projectId, workPackageId: 'WP-M1-1', revision: 'revision-m4', attempt: 0,
+      outcome: 'passed', promotable: true, reasons: [], evidenceIds: ['EVID-M4-1'],
+    });
+    expect(await prisma.evidenceRecord.findUnique({ where: { id: 'EVID-M4-1' } })).toMatchObject({ subjectRevision: 'revision-m4' });
+    expect(await prisma.gateDecision.findUnique({ where: { id: 'GATE-M4-1' } })).toMatchObject({ outcome: 'passed', promotable: true });
+  });
 });

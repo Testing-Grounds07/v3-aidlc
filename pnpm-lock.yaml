@@ -121,6 +121,12 @@ importers:
 
   packages/domain: {}
 
+  packages/orchestration:
+    dependencies:
+      '@v3/verification':
+        specifier: workspace:*
+        version: link:../verification
+
   packages/providers:
     dependencies:
       zod:
@@ -130,6 +136,8 @@ importers:
   packages/repository: {}
 
   packages/shared: {}
+
+  packages/verification: {}
 
 packages:
   '@babel/code-frame@7.29.7':
