@@ -6,14 +6,15 @@ It coordinates persistent project intent, adaptive lifecycle routes, parallel wo
 
 ## Current status
 
-The V3.1 architecture baseline and implementation Milestones 0–3 are complete. Milestone 4 is active.
+The V3.1 architecture baseline and implementation Milestones 0–4 are complete. Milestone 5 is active.
 
 - Completed packages: `V3.1-ARCH-01` through `V3.1-ARCH-14`
 - Completed implementation: Milestone 0 repository foundation and hosted PostgreSQL verification
 - Completed implementation: Milestone 1 governed domain records, transitions, events, and PostgreSQL reload
 - Completed implementation: Milestone 2 repository intelligence, bounded context, and persisted investigations
 - Completed implementation: Milestone 3 provider-neutral execution, capability negotiation, and normalized Agent Runs
-- Current work: Milestone 4 controlled orchestration, verification, independent review, and bounded repair
+- Completed implementation: Milestone 4 controlled orchestration, verification, independent review, and bounded repair
+- Current work: Milestone 5 real Git isolation and review-ready change proposals
 - Architecture specifications: `docs/architecture/`
 - Governed Routes, Modes, policies, protocols, Checks, Gates, and Context Recipes live in their respective top-level directories.
 - Managed project ID: `PRJ-V3-AIDLC`

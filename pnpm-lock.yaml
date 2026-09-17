@@ -139,6 +139,8 @@ importers:
 
   packages/verification: {}
 
+  packages/workspace: {}
+
 packages:
   '@babel/code-frame@7.29.7':
     resolution:

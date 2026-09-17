@@ -452,4 +452,58 @@ export class ProjectRepository {
       });
     });
   }
+
+  async recordWorktreeSession(input: {
+    readonly id: string;
+    readonly projectId: string;
+    readonly workPackageId: string;
+    readonly repositoryRoot: string;
+    readonly worktreePath: string;
+    readonly branch: string;
+    readonly baseRevision: string;
+    readonly headRevision: string;
+  }): Promise<void> {
+    await this.prisma.worktreeSession.create({ data: input });
+  }
+
+  async recordChangeProposal(input: {
+    readonly id: string;
+    readonly projectId: string;
+    readonly workPackageId: string;
+    readonly worktreeSessionId: string;
+    readonly title: string;
+    readonly body: string;
+    readonly baseRevision: string;
+    readonly headRevision: string;
+    readonly branch: string;
+    readonly changedFiles: readonly string[];
+    readonly verificationEvidenceIds: readonly string[];
+    readonly digest: string;
+  }): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.changeProposal.create({
+        data: {
+          ...input,
+          changedFiles: [...input.changedFiles],
+          verificationEvidenceIds: [...input.verificationEvidenceIds],
+        },
+      });
+      await tx.lifecycleEvent.create({
+        data: {
+          id: `EVT-${input.id}-PREPARED`,
+          projectId: input.projectId,
+          type: 'change-proposal.prepared',
+          aggregateType: 'change-proposal',
+          aggregateId: input.id,
+          aggregateVersion: 1,
+          payload: {
+            workPackageId: input.workPackageId,
+            baseRevision: input.baseRevision,
+            headRevision: input.headRevision,
+            digest: input.digest,
+          },
+        },
+      });
+    });
+  }
 }

@@ -69,6 +69,8 @@ model Project {
   agentRuns      AgentRun[]
   evidence       EvidenceRecord[]
   gateDecisions  GateDecision[]
+  worktrees      WorktreeSession[]
+  proposals      ChangeProposal[]
 }
 
 model Requirement {
@@ -139,6 +141,8 @@ model WorkPackage {
   agentRuns            AgentRun[]
   evidence             EvidenceRecord[]
   gateDecisions        GateDecision[]
+  worktrees            WorktreeSession[]
+  proposals            ChangeProposal[]
 
   @@index([projectId])
   @@index([planId])
@@ -258,4 +262,51 @@ model GateDecision {
 
   @@unique([workPackageId, revision, attempt])
   @@index([projectId, createdAt])
+}
+
+model WorktreeSession {
+  id             String           @id
+  projectId      String
+  project        Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workPackageId  String
+  workPackage    WorkPackage      @relation(fields: [workPackageId], references: [id], onDelete: Cascade)
+  repositoryRoot String
+  worktreePath   String
+  branch         String
+  baseRevision   String
+  headRevision   String
+  status         String           @default("active")
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  proposals      ChangeProposal[]
+
+  @@unique([projectId, branch])
+  @@unique([projectId, worktreePath])
+  @@index([workPackageId, status])
+}
+
+model ChangeProposal {
+  id                      String          @id
+  projectId               String
+  project                 Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workPackageId           String
+  workPackage             WorkPackage     @relation(fields: [workPackageId], references: [id], onDelete: Cascade)
+  worktreeSessionId       String
+  worktreeSession         WorktreeSession @relation(fields: [worktreeSessionId], references: [id], onDelete: Cascade)
+  title                   String
+  body                    String
+  baseRevision            String
+  headRevision            String
+  branch                  String
+  changedFiles            String[]
+  verificationEvidenceIds String[]
+  digest                  String
+  status                  String          @default("prepared")
+  externalUrl             String?
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
+
+  @@unique([worktreeSessionId, headRevision])
+  @@index([projectId, status])
+  @@index([workPackageId, createdAt])
 }

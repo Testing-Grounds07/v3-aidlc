@@ -145,4 +145,20 @@ describe.skipIf(!hasDatabase)('ProjectRepository PostgreSQL integration', () => 
     expect(await prisma.evidenceRecord.findUnique({ where: { id: 'EVID-M4-1' } })).toMatchObject({ subjectRevision: 'revision-m4' });
     expect(await prisma.gateDecision.findUnique({ where: { id: 'GATE-M4-1' } })).toMatchObject({ outcome: 'passed', promotable: true });
   });
+
+  it('persists an isolated worktree and review-ready proposal', async () => {
+    await repository.recordWorktreeSession({
+      id: 'WT-M5-1', projectId, workPackageId: 'WP-M1-1', repositoryRoot: '/repo',
+      worktreePath: '/worktrees/wp-m1-1', branch: 'v3/wp-m1-1', baseRevision: 'base-rev', headRevision: 'head-rev',
+    });
+    await repository.recordChangeProposal({
+      id: 'PROP-M5-1', projectId, workPackageId: 'WP-M1-1', worktreeSessionId: 'WT-M5-1',
+      title: 'Prepare isolated change', body: 'Summary and verification', baseRevision: 'base-rev',
+      headRevision: 'head-rev', branch: 'v3/wp-m1-1', changedFiles: ['feature.ts'],
+      verificationEvidenceIds: ['EVID-M4-1'], digest: 'e'.repeat(64),
+    });
+    expect(await prisma.changeProposal.findUnique({ where: { id: 'PROP-M5-1' } })).toMatchObject({
+      status: 'prepared', changedFiles: ['feature.ts'],
+    });
+  });
 });
