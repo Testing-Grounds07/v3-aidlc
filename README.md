@@ -6,7 +6,7 @@ It coordinates persistent project intent, adaptive lifecycle routes, parallel wo
 
 ## Current status
 
-The V3.1 architecture baseline and implementation Milestones 0–10 are complete. Milestone 11 is active.
+The V3.1 architecture baseline and implementation Milestones 0–11 are complete.
 
 - Completed packages: `V3.1-ARCH-01` through `V3.1-ARCH-14`
 - Completed implementation: Milestone 0 repository foundation and hosted PostgreSQL verification
@@ -20,7 +20,8 @@ The V3.1 architecture baseline and implementation Milestones 0–10 are complete
 - Completed implementation: Milestone 8 responsive project dashboard and durable state projection
 - Completed implementation: Milestone 9 sample-aware process health analytics
 - Completed implementation: Milestone 10 independent provider evaluations and evidence-based routing
-- Current work: Milestone 11 organization and team boundaries, permissions, and quotas
+- Completed implementation: Milestone 11 organization and team boundaries, permissions, and quotas
+- Current verification: 59 TypeScript unit/contract tests, 12 hosted PostgreSQL integration tests, all production builds, and 191 Python reference-contract tests
 - Architecture specifications: `docs/architecture/`
 - Governed Routes, Modes, policies, protocols, Checks, Gates, and Context Recipes live in their respective top-level directories.
 - Managed project ID: `PRJ-V3-AIDLC`
