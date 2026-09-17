@@ -121,6 +121,15 @@ importers:
 
   packages/domain: {}
 
+  packages/github:
+    dependencies:
+      '@v3/verification':
+        specifier: workspace:*
+        version: link:../verification
+      '@v3/workspace':
+        specifier: workspace:*
+        version: link:../workspace
+
   packages/orchestration:
     dependencies:
       '@v3/verification':

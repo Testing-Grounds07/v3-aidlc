@@ -161,4 +161,18 @@ describe.skipIf(!hasDatabase)('ProjectRepository PostgreSQL integration', () => 
       status: 'prepared', changedFiles: ['feature.ts'],
     });
   });
+
+  it('persists a GitHub pull request at the verified revision', async () => {
+    await repository.recordGitHubPullRequest({
+      id: 'PR-M6-1', projectId, workPackageId: 'WP-M1-1', changeProposalId: 'PROP-M5-1',
+      repository: 'owner/repo', number: 1, url: 'https://github.test/owner/repo/pull/1',
+      baseBranch: 'main', headBranch: 'v3/wp-m1-1', headRevision: 'head-rev', state: 'open',
+    });
+    expect(await prisma.gitHubPullRequest.findUnique({ where: { id: 'PR-M6-1' } })).toMatchObject({
+      number: 1, headRevision: 'head-rev', state: 'open',
+    });
+    expect(await prisma.changeProposal.findUnique({ where: { id: 'PROP-M5-1' } })).toMatchObject({
+      status: 'published', externalUrl: 'https://github.test/owner/repo/pull/1',
+    });
+  });
 });

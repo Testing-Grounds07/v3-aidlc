@@ -71,6 +71,7 @@ model Project {
   gateDecisions  GateDecision[]
   worktrees      WorktreeSession[]
   proposals      ChangeProposal[]
+  pullRequests   GitHubPullRequest[]
 }
 
 model Requirement {
@@ -116,15 +117,15 @@ model Plan {
 }
 
 model WorkPackage {
-  id                   String            @id
+  id                   String              @id
   projectId            String
-  project              Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project              Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
   planId               String
-  plan                 Plan              @relation(fields: [planId], references: [id], onDelete: Cascade)
+  plan                 Plan                @relation(fields: [planId], references: [id], onDelete: Cascade)
   title                String
   objective            String
-  status               WorkPackageStatus @default(PROPOSED)
-  version              Int               @default(1)
+  status               WorkPackageStatus   @default(PROPOSED)
+  version              Int                 @default(1)
   intentIds            String[]
   routeInstanceId      String?
   workstreamId         String?
@@ -136,13 +137,14 @@ model WorkPackage {
   riskProfileId        String?
   expectedOutcomeTypes String[]
   promotionTarget      String?
-  createdAt            DateTime          @default(now())
-  updatedAt            DateTime          @updatedAt
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
   agentRuns            AgentRun[]
   evidence             EvidenceRecord[]
   gateDecisions        GateDecision[]
   worktrees            WorktreeSession[]
   proposals            ChangeProposal[]
+  pullRequests         GitHubPullRequest[]
 
   @@index([projectId])
   @@index([planId])
@@ -308,5 +310,27 @@ model ChangeProposal {
 
   @@unique([worktreeSessionId, headRevision])
   @@index([projectId, status])
+  @@index([workPackageId, createdAt])
+}
+
+model GitHubPullRequest {
+  id               String      @id
+  projectId        String
+  project          Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workPackageId    String
+  workPackage      WorkPackage @relation(fields: [workPackageId], references: [id], onDelete: Cascade)
+  changeProposalId String      @unique
+  repository       String
+  number           Int
+  url              String
+  baseBranch       String
+  headBranch       String
+  headRevision     String
+  state            String
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@unique([repository, number])
+  @@index([projectId, state])
   @@index([workPackageId, createdAt])
 }

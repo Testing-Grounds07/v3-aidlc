@@ -506,4 +506,41 @@ export class ProjectRepository {
       });
     });
   }
+
+  async recordGitHubPullRequest(input: {
+    readonly id: string;
+    readonly projectId: string;
+    readonly workPackageId: string;
+    readonly changeProposalId: string;
+    readonly repository: string;
+    readonly number: number;
+    readonly url: string;
+    readonly baseBranch: string;
+    readonly headBranch: string;
+    readonly headRevision: string;
+    readonly state: 'open' | 'closed' | 'merged';
+  }): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.gitHubPullRequest.create({ data: input });
+      await tx.changeProposal.update({
+        where: { id: input.changeProposalId },
+        data: { status: 'published', externalUrl: input.url },
+      });
+      await tx.lifecycleEvent.create({
+        data: {
+          id: `EVT-${input.id}-OPENED`,
+          projectId: input.projectId,
+          type: 'pull-request.opened',
+          aggregateType: 'pull-request',
+          aggregateId: input.id,
+          aggregateVersion: 1,
+          payload: {
+            repository: input.repository,
+            number: input.number,
+            headRevision: input.headRevision,
+          },
+        },
+      });
+    });
+  }
 }
