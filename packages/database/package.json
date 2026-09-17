@@ -20,6 +20,7 @@
     "prisma:validate": "prisma validate --schema ../../prisma/schema.prisma"
   },
   "dependencies": {
+    "@v3/domain": "workspace:*",
     "@prisma/client": "^6.15.0"
   }
 }

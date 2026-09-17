@@ -13,3 +13,143 @@ model FoundationRecord {
   name      String   @unique
   createdAt DateTime @default(now())
 }
+
+enum ProjectStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum RequirementStatus {
+  DRAFT
+  APPROVED
+  SUPERSEDED
+}
+
+enum PlanStatus {
+  DRAFT
+  APPROVED
+  SUPERSEDED
+}
+
+enum WorkPackageStatus {
+  PROPOSED
+  PLANNED
+  ELIGIBLE
+  LEASED
+  RUNNING
+  EVIDENCE_PENDING
+  VERIFYING
+  REVIEWING
+  REPAIR_REQUIRED
+  REPLAN_REQUIRED
+  DECISION_REQUIRED
+  BLOCKED
+  ACCEPTED
+  CLOSED
+  CANCELLED
+  SUPERSEDED
+}
+
+model Project {
+  id           String        @id
+  name         String
+  description  String
+  status       ProjectStatus @default(ACTIVE)
+  version      Int           @default(1)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  requirements Requirement[]
+  plans        Plan[]
+  workPackages WorkPackage[]
+  events       LifecycleEvent[]
+}
+
+model Requirement {
+  id                 String                 @id
+  projectId          String
+  project            Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title              String
+  description        String
+  status             RequirementStatus      @default(DRAFT)
+  version            Int                    @default(1)
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  acceptanceCriteria AcceptanceCriterion[]
+
+  @@index([projectId])
+}
+
+model AcceptanceCriterion {
+  id                 String      @id
+  requirementId      String
+  requirement        Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  statement          String
+  verificationMethod String
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@index([requirementId])
+}
+
+model Plan {
+  id           String        @id
+  projectId    String
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title        String
+  objective    String
+  status       PlanStatus    @default(DRAFT)
+  version      Int           @default(1)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  workPackages WorkPackage[]
+
+  @@index([projectId])
+}
+
+model WorkPackage {
+  id                   String            @id
+  projectId            String
+  project              Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  planId                String
+  plan                  Plan              @relation(fields: [planId], references: [id], onDelete: Cascade)
+  title                 String
+  objective             String
+  status                WorkPackageStatus @default(PROPOSED)
+  version               Int               @default(1)
+  intentIds             String[]
+  routeInstanceId       String?
+  workstreamId          String?
+  unitId                String?
+  boltId                String?
+  stage                 String
+  modeId                String?
+  posture               String
+  riskProfileId         String?
+  expectedOutcomeTypes  String[]
+  promotionTarget       String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  @@index([projectId])
+  @@index([planId])
+  @@index([status])
+}
+
+model LifecycleEvent {
+  sequence         BigInt   @id @default(autoincrement())
+  id               String   @unique
+  projectId        String
+  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type             String
+  aggregateType    String
+  aggregateId      String
+  aggregateVersion Int
+  payload          Json
+  occurredAt       DateTime @default(now())
+
+  @@unique([aggregateType, aggregateId, aggregateVersion])
+  @@index([projectId, sequence])
+  @@index([aggregateType, aggregateId])
+}
