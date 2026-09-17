@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "0.1",
+  "id": "ROUTE-PRODUCTION-READY",
+  "version": "1.0.0",
+  "title": "Production-Ready",
+  "purpose": "Develop and operate a dependable capability that people may rely on.",
+  "defaultPosture": "balanced",
+  "allowedPostures": ["fast", "balanced", "assured", "emergency"],
+  "hardControls": ["CTRL-DURABLE-STATE", "CTRL-EVIDENCE-BOUND-GATES", "CTRL-NO-SELF-APPROVAL"],
+  "stages": [
+    {"id": "discovery", "modeRules": [{"modeId": "MODE-INVESTIGATION", "requirement": "required"}]},
+    {"id": "design", "modeRules": [
+      {"modeId": "MODE-ARCHITECTURE", "requirement": "required"},
+      {"modeId": "MODE-UI-PROTOTYPE", "requirement": "conditional", "whenAll": [{"fact": "userFacing", "equals": true}]},
+      {"modeId": "MODE-INDEPENDENT-REVIEW", "requirement": "required"}
+    ]},
+    {"id": "validation", "modeRules": [{"modeId": "MODE-INDEPENDENT-REVIEW", "requirement": "required"}]},
+    {"id": "release", "modeRules": [{"modeId": "MODE-HARDENING", "requirement": "required"}]}
+  ],
+  "completionOutcomes": ["released", "stopped_with_evidence"]
+}
+

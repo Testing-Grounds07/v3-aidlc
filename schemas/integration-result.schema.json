@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://v3-aidlc.dev/schemas/integration-result.schema.json",
+  "title": "Integration Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "batchId", "batchDigest", "targetRevision", "status", "summary", "checkResults", "evidenceIds"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "batchId": {"type": "string", "minLength": 1},
+    "batchDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "targetRevision": {"type": "string", "minLength": 1},
+    "resultingRevision": {"type": "string", "minLength": 1},
+    "status": {"enum": ["passed", "failed", "inconclusive"]},
+    "summary": {"type": "string", "minLength": 1},
+    "checkResults": {
+      "type": "object",
+      "additionalProperties": {"enum": ["passed", "failed", "inconclusive"]}
+    },
+    "evidenceIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+  }
+}

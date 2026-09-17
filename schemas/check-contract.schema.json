@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "check-contract.schema.json",
+  "title": "V3-AIDLC Check Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "version", "title", "method", "acceptedEvidenceKinds", "minimumEvidence", "maxAgeSeconds", "requiresDigest", "requiresIndependentEvaluator"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "id": {"type": "string", "pattern": "^CHECK-[A-Z0-9-]+$"},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "title": {"type": "string", "minLength": 1},
+    "method": {"enum": ["deterministic", "semantic_review", "human_verification"]},
+    "acceptedEvidenceKinds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["artifact", "test_result", "build_result", "review_disposition", "scan_result", "observation", "metric", "decision", "provenance_manifest"]}},
+    "minimumEvidence": {"type": "integer", "minimum": 1},
+    "maxAgeSeconds": {"type": "integer", "minimum": 0},
+    "requiresDigest": {"type": "boolean"},
+    "requiresIndependentEvaluator": {"type": "boolean"}
+  }
+}

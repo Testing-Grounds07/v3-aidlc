@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lease.schema.json",
+  "title": "V3-AIDLC Execution Lease",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "leaseId", "projectId", "resourceType", "resourceId", "holderRunId", "acquiredAt", "heartbeatAt", "expiresAt", "status", "attempt", "contextManifestId", "dispatchDigest", "idempotencyKey"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "leaseId": {"type": "string", "pattern": "^LEASE-"},
+    "projectId": {"type": "string", "minLength": 1},
+    "resourceType": {"type": "string", "minLength": 1},
+    "resourceId": {"type": "string", "minLength": 1},
+    "holderRunId": {"type": "string", "minLength": 1},
+    "acquiredAt": {"type": "string", "format": "date-time"},
+    "heartbeatAt": {"type": "string", "format": "date-time"},
+    "expiresAt": {"type": "string", "format": "date-time"},
+    "status": {"enum": ["active", "released", "expired", "revoked"]},
+    "attempt": {"type": "integer", "minimum": 1},
+    "contextManifestId": {"type": "string", "minLength": 1},
+    "dispatchDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "idempotencyKey": {"type": "string", "minLength": 1}
+  }
+}

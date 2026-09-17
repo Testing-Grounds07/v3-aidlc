@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "0.1",
+  "id": "MODE-INVESTIGATION",
+  "version": "1.0.0",
+  "title": "Investigation",
+  "objective": "Reduce uncertainty and produce an evidence-backed understanding of a question or problem.",
+  "supportedStages": ["discovery"],
+  "requiredInputs": ["question", "known constraints"],
+  "roles": [{"name": "planner", "responsibility": "Investigate and synthesize evidence"}],
+  "requiredOutputs": ["findings", "uncertainties", "recommendation"],
+  "evidence": ["source references", "inspection results"],
+  "completionCriteria": ["Question answered, bounded, or explicitly inconclusive"],
+  "hardControls": ["CTRL-SOURCE-PROVENANCE"],
+  "attemptBudget": 3,
+  "postureProfiles": {"explore": {"comparisonBreadth": "wide"}, "balanced": {"comparisonBreadth": "targeted"}, "assured": {"independentReview": true}},
+  "outcomes": ["accepted_learning", "replan_required", "inconclusive"],
+  "allowedNextModes": ["MODE-ARCHITECTURE", "MODE-UI-PROTOTYPE"]
+}
+

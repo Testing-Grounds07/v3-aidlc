@@ -1,0 +1,22 @@
+{
+  "name": "@v3/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "harness": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@v3/shared": "workspace:*",
+    "commander": "^14.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.5"
+  }
+}

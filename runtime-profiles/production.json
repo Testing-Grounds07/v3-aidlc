@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "0.1",
+  "profileId": "PROFILE-PRODUCTION-01",
+  "profileKind": "production",
+  "description": "Fully governed production service with complete security, telemetry, and recovery controls.",
+  "components": ["liaison", "project_lead", "scheduler", "worker", "state", "artifacts", "credential_broker", "telemetry"],
+  "configuration": {
+    "state": {"authority": "state.db", "snapshotAuthority": false, "driver": "high_availability_sql"},
+    "security": {"allowRawSecrets": false, "verifyProvenance": true, "networkDefault": "allowlist"},
+    "scheduler": {"maxConcurrency": 32},
+    "telemetry": {"enabled": true},
+    "recovery": {"restoreTestsRequired": true}
+  }
+}

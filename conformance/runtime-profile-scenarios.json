@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "0.1",
+  "catalogId": "CATALOG-RUNTIME-PROFILES-01",
+  "scenarios": [
+    {"scenarioId": "RUNTIME-01", "title": "Local profile starts with lightweight controls", "expected": "valid"},
+    {"scenarioId": "RUNTIME-02", "title": "Production profile requires the complete component set", "expected": "reject_incomplete"},
+    {"scenarioId": "RUNTIME-03", "title": "Configuration precedence is deterministic", "expected": "command_line_wins"},
+    {"scenarioId": "RUNTIME-04", "title": "Protected state authority cannot be overridden", "expected": "reject_override"},
+    {"scenarioId": "RUNTIME-05", "title": "Secret values are represented only by references", "expected": "reject_raw_secret"},
+    {"scenarioId": "RUNTIME-06", "title": "Package compatibility fails closed", "expected": "incompatible"}
+  ]
+}

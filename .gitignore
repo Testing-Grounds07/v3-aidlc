@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.pnpm-store/
+apps/web/vite.config.js
+apps/web/vite.config.d.ts
+packages/database/src/generated/
+.coverage
+.venv/
+dist/
+build/
+
+# Live V3 state must remain outside the framework repository.
+state.db
+project-state.json
+evidence/
+.v3-runtime/

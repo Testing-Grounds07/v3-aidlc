@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "0.1",
+  "id": "CHECK-AUTOMATED-TESTS",
+  "version": "1.0.0",
+  "title": "Automated test suite",
+  "method": "deterministic",
+  "acceptedEvidenceKinds": ["test_result"],
+  "minimumEvidence": 1,
+  "maxAgeSeconds": 86400,
+  "requiresDigest": true,
+  "requiresIndependentEvaluator": false
+}

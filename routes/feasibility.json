@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "0.1",
+  "id": "ROUTE-FEASIBILITY",
+  "version": "1.0.0",
+  "title": "Feasibility",
+  "purpose": "Answer whether or how an approach can work before committing to product development.",
+  "defaultPosture": "explore",
+  "allowedPostures": ["explore", "fast", "balanced"],
+  "hardControls": ["CTRL-SOURCE-PROVENANCE", "CTRL-LIMIT-REAL-WORLD-SIDE-EFFECTS"],
+  "stages": [
+    {"id": "discovery", "modeRules": [{"modeId": "MODE-INVESTIGATION", "requirement": "required"}]},
+    {"id": "design", "modeRules": [
+      {"modeId": "MODE-ARCHITECTURE", "requirement": "optional"},
+      {"modeId": "MODE-UI-PROTOTYPE", "requirement": "conditional", "whenAll": [{"fact": "uncertaintyType", "in": ["workflow", "interface"]}]}
+    ]}
+  ],
+  "completionOutcomes": ["viable", "not_viable", "inconclusive", "route_change_proposed"]
+}
+

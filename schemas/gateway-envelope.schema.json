@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gateway-envelope.schema.json",
+  "title": "V3-AIDLC Conversational Gateway Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "messageId", "conversationId", "kind",
+    "sender", "recipient", "createdAt", "payload"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "messageId": {"type": "string", "minLength": 1},
+    "conversationId": {"type": "string", "minLength": 1},
+    "correlationId": {"type": "string", "minLength": 1},
+    "projectId": {"type": ["string", "null"]},
+    "kind": {
+      "enum": [
+        "user_request", "intake_proposal", "clarification_needed",
+        "clarification_request", "user_clarification", "clarification_submission",
+        "progress", "progress_update", "decision_needed", "decision_request",
+        "user_decision", "decision_submission", "decision_recorded", "blocked",
+        "blocked_notice", "completed", "completion_report", "correction",
+        "correction_submission", "delegation", "delegation_proposal",
+        "revocation", "revocation_submission"
+      ]
+    },
+    "sender": {"enum": ["user", "liaison", "project_lead"]},
+    "recipient": {"enum": ["user", "liaison", "project_lead"]},
+    "createdAt": {"type": "string", "format": "date-time"},
+    "payload": {"type": "object"}
+  }
+}

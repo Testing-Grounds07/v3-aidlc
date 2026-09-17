@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://v3-aidlc.dev/schemas/integration-batch.schema.json",
+  "title": "Integration Batch",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "batchId", "projectId", "integrationGroup", "targetRevision", "ownerRole", "requiredChecks", "members", "batchDigest"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "batchId": {"type": "string", "minLength": 1},
+    "projectId": {"type": "string", "minLength": 1},
+    "integrationGroup": {"type": "string", "minLength": 1},
+    "targetRevision": {"type": "string", "minLength": 1},
+    "ownerRole": {"type": "string", "minLength": 1},
+    "requiredChecks": {"$ref": "#/$defs/uniqueStrings"},
+    "members": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["workPackageId", "subjectRevision", "artifactDigest", "evidenceIds"],
+        "properties": {
+          "workPackageId": {"type": "string", "minLength": 1},
+          "subjectRevision": {"type": "string", "minLength": 1},
+          "artifactDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "evidenceIds": {"$ref": "#/$defs/uniqueStrings"}
+        }
+      }
+    },
+    "batchDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "$defs": {
+    "uniqueStrings": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+  }
+}

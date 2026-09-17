@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "0.1",
+  "id": "GATE-PRODUCTION-PROMOTION",
+  "version": "1.0.0",
+  "title": "Production promotion readiness",
+  "gateType": "promotion",
+  "acceptedExceptionAuthorities": ["product_owner", "risk_owner"],
+  "checkRules": [
+    {
+      "checkId": "CHECK-AUTOMATED-TESTS",
+      "requirement": "required",
+      "waivable": false,
+      "hardControl": true
+    },
+    {
+      "checkId": "CHECK-INDEPENDENT-REVIEW",
+      "requirement": "required",
+      "waivable": false,
+      "hardControl": true
+    },
+    {
+      "checkId": "CHECK-SECURITY-SCAN",
+      "requirement": "conditional",
+      "whenAll": [{"fact": "securityRelevant", "equals": true}],
+      "waivable": true,
+      "hardControl": false
+    }
+  ]
+}

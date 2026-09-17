@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://v3-aidlc.dev/schemas/runtime-profile.schema.json",
+  "title": "V3 Runtime Profile",
+  "type": "object",
+  "required": ["schemaVersion", "profileId", "profileKind", "description", "components", "configuration"],
+  "properties": {
+    "schemaVersion": {"type": "string", "minLength": 1},
+    "profileId": {"type": "string", "minLength": 1},
+    "profileKind": {"enum": ["local", "team", "hosted", "production"]},
+    "description": {"type": "string", "minLength": 1},
+    "components": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"enum": ["liaison", "project_lead", "scheduler", "worker", "state", "artifacts", "credential_broker", "telemetry"]}
+    },
+    "configuration": {
+      "type": "object",
+      "required": ["state", "security"],
+      "properties": {
+        "state": {
+          "type": "object", "required": ["authority", "snapshotAuthority"],
+          "properties": {"authority": {"const": "state.db"}, "snapshotAuthority": {"const": false}},
+          "additionalProperties": true
+        },
+        "security": {
+          "type": "object", "required": ["allowRawSecrets"],
+          "properties": {"allowRawSecrets": {"const": false}, "verifyProvenance": {"type": "boolean"}},
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

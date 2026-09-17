@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "execution-state.schema.json",
+  "title": "V3-AIDLC Execution State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "projectLeadState", "workPackageState"],
+  "properties": {
+    "schemaVersion": {
+      "const": "0.1"
+    },
+    "projectLeadState": {
+      "enum": [
+        "sleeping",
+        "reconciling",
+        "selecting",
+        "dispatching",
+        "waiting",
+        "evaluating",
+        "repairing",
+        "replanning",
+        "escalated",
+        "paused",
+        "completed",
+        "blocked"
+      ]
+    },
+    "workPackageState": {
+      "enum": [
+        "proposed",
+        "planned",
+        "eligible",
+        "leased",
+        "running",
+        "evidence_pending",
+        "verifying",
+        "reviewing",
+        "repair_required",
+        "replan_required",
+        "decision_required",
+        "blocked",
+        "accepted",
+        "closed",
+        "cancelled",
+        "superseded"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "eventId": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
+

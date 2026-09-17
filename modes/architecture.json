@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "0.1",
+  "id": "MODE-ARCHITECTURE",
+  "version": "1.0.0",
+  "title": "Architecture",
+  "objective": "Define coherent boundaries, contracts, decisions, and quality constraints for the intended system.",
+  "supportedStages": ["design"],
+  "requiredInputs": ["intent", "requirements", "constraints", "current architecture when brownfield"],
+  "roles": [{"name": "planner", "responsibility": "Propose architecture and record tradeoffs"}, {"name": "reviewer", "responsibility": "Independently assess coherence and risks"}],
+  "requiredOutputs": ["architecture specification", "decision records", "work boundaries"],
+  "evidence": ["requirements coverage", "review findings"],
+  "completionCriteria": ["Required decisions are explicit", "Critical interfaces and risks are addressed"],
+  "hardControls": ["CTRL-INDEPENDENT-REVIEW", "CTRL-TRACEABILITY"],
+  "attemptBudget": 3,
+  "postureProfiles": {"fast": {"documentationDepth": "decision-focused"}, "balanced": {"documentationDepth": "standard"}, "assured": {"documentationDepth": "comprehensive"}},
+  "outcomes": ["accepted_result", "repair_required", "replan_required", "decision_required"],
+  "allowedNextModes": ["MODE-INDEPENDENT-REVIEW", "MODE-HARDENING"]
+}
+

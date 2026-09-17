@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "0.1",
+  "id": "MODE-INDEPENDENT-REVIEW",
+  "version": "1.0.0",
+  "title": "Independent Review",
+  "objective": "Judge a result using separate context, read-only authority, and explicit criteria.",
+  "supportedStages": ["design", "validation"],
+  "requiredInputs": ["specification", "candidate result", "evidence manifest"],
+  "roles": [{"name": "reviewer", "responsibility": "Identify findings without modifying the candidate"}],
+  "requiredOutputs": ["typed findings", "review disposition"],
+  "evidence": ["review context manifest", "finding records"],
+  "completionCriteria": ["All applicable criteria assessed", "Disposition and uncertainty recorded"],
+  "hardControls": ["CTRL-REVIEWER-READ-ONLY", "CTRL-NO-SELF-APPROVAL"],
+  "attemptBudget": 2,
+  "postureProfiles": {"fast": {"reviewBreadth": "critical-risks"}, "balanced": {"reviewBreadth": "standard"}, "assured": {"reviewBreadth": "comprehensive"}},
+  "outcomes": ["accepted_result", "repair_required", "replan_required", "decision_required"],
+  "allowedNextModes": ["MODE-HARDENING"]
+}
+

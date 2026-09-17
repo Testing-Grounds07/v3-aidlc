@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "0.1",
+  "id": "POL-GOVERNED-DEVELOPMENT",
+  "version": "0.1.0",
+  "title": "Governed development baseline",
+  "scope": "organization",
+  "defaultDecision": "user_decision_required",
+  "rules": [
+    {
+      "id": "RULE-BLOCK-HARD-CONTROL-WAIVER",
+      "priority": 1000,
+      "decision": "blocked",
+      "whenAll": [{"fact": "waivesHardControl", "equals": true}],
+      "explanation": "A mandatory control cannot be silently waived."
+    },
+    {
+      "id": "RULE-BLOCK-MISSING-PERMISSION",
+      "priority": 990,
+      "decision": "blocked",
+      "whenAll": [{"fact": "hasRequiredPermission", "equals": false}],
+      "explanation": "The required permission or capability is unavailable."
+    },
+    {
+      "id": "RULE-ASK-IRREVERSIBLE-EXTERNAL",
+      "priority": 900,
+      "decision": "user_decision_required",
+      "whenAll": [{"fact": "impact", "equals": "external_irreversible"}],
+      "explanation": "The action has an external effect that cannot be readily undone."
+    },
+    {
+      "id": "RULE-ASK-MATERIAL-PRODUCT-CHANGE",
+      "priority": 890,
+      "decision": "user_decision_required",
+      "whenAll": [{"fact": "changesProductIntent", "equals": true}],
+      "explanation": "The action would materially change what the product is meant to do."
+    },
+    {
+      "id": "RULE-ASK-SCOPE-EXPANSION",
+      "priority": 880,
+      "decision": "user_decision_required",
+      "whenAll": [{"fact": "scopeChange", "equals": "expand"}],
+      "explanation": "The proposed work expands the approved scope."
+    },
+    {
+      "id": "RULE-ASK-RISK-ACCEPTANCE",
+      "priority": 870,
+      "decision": "user_decision_required",
+      "whenAll": [{"fact": "acceptsResidualRisk", "equals": true}],
+      "explanation": "Accepting unresolved risk requires accountable human authority."
+    },
+    {
+      "id": "RULE-ASK-PRODUCTION-CREDENTIALS",
+      "priority": 860,
+      "decision": "user_decision_required",
+      "whenAll": [
+        {"fact": "targetEnvironment", "equals": "production"},
+        {"fact": "usesCredentials", "equals": true},
+        {"fact": "standingDelegation", "equals": false}
+      ],
+      "explanation": "Production credential use has not been covered by a standing delegation."
+    },
+    {
+      "id": "RULE-ASK-PRODUCTION-PROMOTION",
+      "priority": 850,
+      "decision": "user_decision_required",
+      "whenAll": [
+        {"fact": "actionType", "equals": "promote"},
+        {"fact": "targetEnvironment", "equals": "production"},
+        {"fact": "standingDelegation", "equals": false}
+      ],
+      "explanation": "Production promotion requires the user unless it was explicitly delegated."
+    },
+    {
+      "id": "RULE-RECORD-DELEGATED-PRODUCTION-PROMOTION",
+      "priority": 600,
+      "decision": "auto_proceed_and_record",
+      "whenAll": [
+        {"fact": "actionType", "equals": "promote"},
+        {"fact": "targetEnvironment", "equals": "production"},
+        {"fact": "standingDelegation", "equals": true},
+        {"fact": "requiredGatesPassed", "equals": true},
+        {"fact": "hasRequiredPermission", "equals": true}
+      ],
+      "explanation": "A recorded standing delegation permits production promotion after its required gates pass."
+    },
+    {
+      "id": "RULE-RECORD-DELEGATED-PRODUCTION-CREDENTIALS",
+      "priority": 590,
+      "decision": "auto_proceed_and_record",
+      "whenAll": [
+        {"fact": "actionType", "in": ["implement", "test", "operate", "collect_evidence"]},
+        {"fact": "targetEnvironment", "equals": "production"},
+        {"fact": "usesCredentials", "equals": true},
+        {"fact": "standingDelegation", "equals": true},
+        {"fact": "hasRequiredPermission", "equals": true}
+      ],
+      "explanation": "Delegated production credential use must be recorded against the standing authority."
+    },
+    {
+      "id": "RULE-BUDGETED-REPAIR",
+      "priority": 500,
+      "decision": "auto_proceed_within_budget",
+      "whenAll": [
+        {"fact": "actionType", "equals": "repair"},
+        {"fact": "impact", "in": ["none", "local_reversible", "shared_reversible"]},
+        {"fact": "hasRequiredPermission", "equals": true}
+      ],
+      "budgets": [
+        {"fact": "repairAttempt", "maximum": 2},
+        {"fact": "costUnits", "maximum": 10}
+      ],
+      "onBudgetExceeded": "user_decision_required",
+      "explanation": "A reversible repair may proceed while its attempt and cost limits remain available."
+    },
+    {
+      "id": "RULE-RECORD-REPLAN",
+      "priority": 400,
+      "decision": "auto_proceed_and_record",
+      "whenAll": [
+        {"fact": "actionType", "equals": "replan"},
+        {"fact": "scopeChange", "in": ["none", "narrow"]},
+        {"fact": "hasRequiredPermission", "equals": true}
+      ],
+      "explanation": "The Project Lead may revise the approach without expanding the approved outcome."
+    },
+    {
+      "id": "RULE-RECORD-ROUTE-TAILORING",
+      "priority": 390,
+      "decision": "auto_proceed_and_record",
+      "whenAll": [
+        {"fact": "actionType", "equals": "tailor_route"},
+        {"fact": "tailoringPermitted", "equals": true},
+        {"fact": "scopeChange", "in": ["none", "narrow"]},
+        {"fact": "hasRequiredPermission", "equals": true}
+      ],
+      "explanation": "Permitted route tailoring may proceed when the reason and resulting route are recorded."
+    },
+    {
+      "id": "RULE-AUTO-ROUTINE-LOCAL-WORK",
+      "priority": 100,
+      "decision": "auto_proceed",
+      "whenAll": [
+        {"fact": "actionType", "in": ["implement", "test", "document", "collect_evidence", "analyze"]},
+        {"fact": "impact", "in": ["none", "local_reversible"]},
+        {"fact": "scopeChange", "in": ["none", "narrow"]},
+        {"fact": "hasRequiredPermission", "equals": true}
+      ],
+      "explanation": "Routine reversible work is within the Project Lead's standing authority."
+    }
+  ]
+}

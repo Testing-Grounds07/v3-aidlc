@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "context-item.schema.json",
+  "title": "V3-AIDLC Context Item",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "revision", "kind", "sourceType", "sourceRef", "sensitivity", "integrity", "projectId", "createdAt", "claimKey", "entityIds", "stages", "modes", "roles", "relevanceTags", "alwaysInclude"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "id": {"type": "string", "pattern": "^ITEM-[A-Z0-9-]+$"},
+    "revision": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["instruction", "objective", "requirement", "constraint", "decision", "architecture", "artifact_reference", "evidence_reference", "finding", "learning", "conversation_excerpt", "tool_contract", "secret_reference", "external_fact", "assumption"]},
+    "sourceType": {"enum": ["organization_policy", "project_policy", "user_instruction", "canonical_state", "governed_contract", "verified_evidence", "external_source", "liaison_summary", "assumption"]},
+    "sourceRef": {"type": "string", "minLength": 1},
+    "sensitivity": {"enum": ["public", "internal", "confidential", "restricted", "secret"]},
+    "integrity": {"enum": ["authoritative", "verified", "unverified", "assumption"]},
+    "projectId": {"type": "string", "minLength": 1},
+    "createdAt": {"type": "string", "format": "date-time"},
+    "expiresAt": {"type": "string", "format": "date-time"},
+    "claimKey": {"type": "string", "minLength": 1},
+    "entityIds": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "stages": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "modes": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "roles": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "relevanceTags": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "alwaysInclude": {"type": "boolean"},
+    "content": {"type": "string", "minLength": 1},
+    "reference": {"type": "string", "minLength": 1}
+  },
+  "oneOf": [
+    {"required": ["content"], "not": {"required": ["reference"]}},
+    {"required": ["reference"], "not": {"required": ["content"]}}
+  ]
+}

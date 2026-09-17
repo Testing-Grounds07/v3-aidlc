@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "0.1",
+  "id": "CONTEXT-INDEPENDENT-REVIEW",
+  "version": "1.0.0",
+  "title": "Independent reviewer context",
+  "role": "reviewer",
+  "allowedKinds": ["objective", "requirement", "constraint", "decision", "architecture", "artifact_reference", "evidence_reference", "tool_contract", "external_fact"],
+  "requiredKinds": ["objective", "requirement", "constraint", "artifact_reference", "evidence_reference", "tool_contract"],
+  "allowedSources": ["organization_policy", "project_policy", "user_instruction", "canonical_state", "governed_contract", "verified_evidence", "external_source"],
+  "maxSensitivity": "confidential",
+  "maxItems": 30,
+  "maxBytes": 24576,
+  "kindPriority": ["objective", "requirement", "constraint", "decision", "architecture", "artifact_reference", "evidence_reference", "tool_contract", "external_fact"],
+  "toolAllowlist": ["filesystem.read", "tests.run"],
+  "networkAllowlist": []
+}

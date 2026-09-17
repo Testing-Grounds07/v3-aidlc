@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Production Readiness Checklist","type":"object","required":["checklistId","controls"],"properties":{"checklistId":{"type":"string"},"controls":{"type":"array","minItems":1,"items":{"type":"object","required":["id","required"],"properties":{"id":{"type":"string"},"required":{"type":"boolean"}}}}}}

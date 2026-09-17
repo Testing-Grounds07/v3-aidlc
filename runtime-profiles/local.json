@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "0.1",
+  "profileId": "PROFILE-LOCAL-01",
+  "profileKind": "local",
+  "description": "Single-user development and experimentation on one trusted computer.",
+  "components": ["liaison", "project_lead", "scheduler", "worker", "state", "artifacts"],
+  "configuration": {
+    "state": {"authority": "state.db", "snapshotAuthority": false, "driver": "sqlite"},
+    "security": {"allowRawSecrets": false, "verifyProvenance": false, "networkDefault": "deny_all"},
+    "scheduler": {"maxConcurrency": 2},
+    "telemetry": {"enabled": false},
+    "recovery": {"restoreTestsRequired": false}
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "0.1",
+  "id": "MODE-UI-PROTOTYPE",
+  "version": "1.0.0",
+  "title": "UI Prototyping",
+  "objective": "Create and evaluate representative user-facing screens, states, and interactions.",
+  "supportedStages": ["design"],
+  "requiredInputs": ["user need", "workflow", "target platform"],
+  "roles": [{"name": "actor", "responsibility": "Create the prototype"}, {"name": "reviewer", "responsibility": "Evaluate usability and accessibility"}],
+  "requiredOutputs": ["renderable prototype", "state coverage", "review findings"],
+  "evidence": ["rendered views", "interaction checks", "accessibility results"],
+  "completionCriteria": ["Representative workflow can be evaluated", "Known limitations are visible"],
+  "hardControls": ["CTRL-NO-UNLABELED-REAL-DATA", "CTRL-ACCESSIBILITY-BASELINE"],
+  "attemptBudget": 4,
+  "postureProfiles": {"explore": {"fidelity": "variable"}, "fast": {"fidelity": "core-flow"}, "balanced": {"fidelity": "representative"}, "assured": {"fidelity": "high"}},
+  "outcomes": ["accepted_result", "accepted_learning", "repair_required", "replan_required"],
+  "allowedNextModes": ["MODE-INDEPENDENT-REVIEW"]
+}
+

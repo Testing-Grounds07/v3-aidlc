@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Operational Budget","type":"object","required":["budgetId","dimension","period","limit","warnAt"],"properties":{"budgetId":{"type":"string"},"dimension":{"type":"string"},"period":{"type":"string"},"limit":{"type":"integer","minimum":1},"warnAt":{"type":"integer","minimum":0}}}

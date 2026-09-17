@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "0.1",
+  "scenarios": [
+    {
+      "id": "CONF-01",
+      "title": "Routine bounded work completes",
+      "purpose": "Prove the normal managed path from activation through evidence-based acceptance.",
+      "expectedStatus": "completed",
+      "requiredPhases": ["activation", "route", "authorization", "context", "capability", "scheduling", "dispatch", "evidence"],
+      "assertions": ["The exact context and dispatch are pinned.", "Completion is accepted only after its Gate passes."]
+    },
+    {
+      "id": "CONF-02",
+      "title": "Missing permission blocks dispatch",
+      "purpose": "Prove that authorization failure stops work before sensitive context or execution is issued.",
+      "expectedStatus": "blocked",
+      "requiredPhases": ["activation", "route", "authorization"],
+      "assertions": ["No Context Manifest is created.", "No Agent Run is dispatched."]
+    },
+    {
+      "id": "CONF-03",
+      "title": "Material external action returns to the user",
+      "purpose": "Prove that irreversible effects cannot be authorized by the liaison or runner.",
+      "expectedStatus": "decision_required",
+      "requiredPhases": ["activation", "route", "authorization"],
+      "assertions": ["The user receives a decision request before dispatch."]
+    },
+    {
+      "id": "CONF-04",
+      "title": "Parallel changes integrate together",
+      "purpose": "Prove that independent work may run together but must pass combined checks.",
+      "expectedStatus": "completed",
+      "requiredPhases": ["activation", "route", "authorization", "context", "capability", "scheduling", "dispatch", "evidence", "integration"],
+      "assertions": ["Both resource reservations are compatible.", "One revision-bound Integration Batch passes."]
+    },
+    {
+      "id": "CONF-05",
+      "title": "Conflicting changes wait safely",
+      "purpose": "Prove that two writers cannot simultaneously own one conflict domain.",
+      "expectedStatus": "waiting",
+      "requiredPhases": ["activation", "route", "authorization", "context", "capability", "scheduling"],
+      "assertions": ["One writer is selected.", "The other is deferred with an exact conflict reason."]
+    },
+    {
+      "id": "CONF-06",
+      "title": "Interrupted reversible work is requeued",
+      "purpose": "Prove that an expired local attempt can retry within its attempt budget.",
+      "expectedStatus": "recovery_action",
+      "requiredPhases": ["recovery"],
+      "assertions": ["Recovery selects reclaim_and_requeue."]
+    },
+    {
+      "id": "CONF-07",
+      "title": "Uncertain external effect is checked first",
+      "purpose": "Prove that an interrupted consequential action is not repeated blindly.",
+      "expectedStatus": "recovery_action",
+      "requiredPhases": ["recovery"],
+      "assertions": ["Recovery selects verify_external_effect before retry."]
+    }
+  ]
+}

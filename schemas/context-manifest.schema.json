@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "context-manifest.schema.json",
+  "title": "V3-AIDLC Compiled Context Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "manifestId", "runId", "role", "recipeId", "recipeVersion", "generatedAt", "selectedItems", "exclusions", "toolAllowlist", "networkAllowlist", "totalBytes", "sha256"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "manifestId": {"type": "string", "pattern": "^CTX-"},
+    "runId": {"type": "string", "minLength": 1},
+    "role": {"type": "string", "minLength": 1},
+    "recipeId": {"type": "string", "minLength": 1},
+    "recipeVersion": {"type": "string", "minLength": 1},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "selectedItems": {"type": "array", "items": {"type": "object"}},
+    "exclusions": {"type": "array", "items": {"type": "object", "required": ["itemId", "reason"], "properties": {"itemId": {"type": "string"}, "reason": {"type": "string"}}, "additionalProperties": false}},
+    "toolAllowlist": {"type": "array", "items": {"type": "string"}},
+    "networkAllowlist": {"type": "array", "items": {"type": "string"}},
+    "totalBytes": {"type": "integer", "minimum": 0},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

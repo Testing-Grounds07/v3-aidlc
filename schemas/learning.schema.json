@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "learning.schema.json",
+  "title": "V3-AIDLC Learning",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "projectId", "learningType", "confidence", "status", "statement", "sourceFindingIds", "sourceEventIds", "evidenceIds", "applicabilityTags", "createdAt", "createdBy"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "id": {"type": "string", "pattern": "^LEARN-"},
+    "projectId": {"type": "string", "minLength": 1},
+    "learningType": {"enum": ["validated_fact", "negative_result", "hypothesis", "decision_rule", "pattern", "counterexample"]},
+    "confidence": {"enum": ["tentative", "supported", "validated"]},
+    "status": {"enum": ["active", "superseded", "retracted"]},
+    "statement": {"type": "string", "minLength": 1},
+    "sourceFindingIds": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "sourceEventIds": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "evidenceIds": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "applicabilityTags": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "createdAt": {"type": "string", "format": "date-time"},
+    "createdBy": {"type": "string", "minLength": 1},
+    "statusReason": {"type": "string", "minLength": 1},
+    "statusEventId": {"type": "string", "minLength": 1}
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://v3-aidlc.dev/schemas/conformance-scenario.schema.json",
+  "title": "Conformance Scenario Declaration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "purpose", "expectedStatus", "requiredPhases", "assertions"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "purpose": {"type": "string", "minLength": 1},
+    "expectedStatus": {"enum": ["not_managed", "completed", "waiting", "decision_required", "blocked", "failed", "recovery_action"]},
+    "requiredPhases": {
+      "type": "array",
+      "items": {"enum": ["activation", "route", "authorization", "context", "capability", "scheduling", "dispatch", "evidence", "integration", "recovery"]},
+      "uniqueItems": true
+    },
+    "assertions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+  }
+}

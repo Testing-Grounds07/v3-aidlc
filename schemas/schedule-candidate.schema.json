@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://v3-aidlc.dev/schemas/schedule-candidate.schema.json",
+  "title": "Schedule Candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "projectId", "workPackageId", "subjectRevision", "workstreamId", "adapterId", "role", "priorityClass", "userPriority", "queuedAt", "dependencyIds", "claims", "quotaCosts"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "projectId": {"type": "string", "minLength": 1},
+    "workPackageId": {"type": "string", "minLength": 1},
+    "subjectRevision": {"type": "string", "minLength": 1},
+    "workstreamId": {"type": "string", "minLength": 1},
+    "adapterId": {"type": "string", "minLength": 1},
+    "role": {"type": "string", "minLength": 1},
+    "priorityClass": {"enum": ["safety_recovery", "critical_path", "user_priority", "integration_blocker", "intent_value", "uncertainty_reduction", "normal"]},
+    "userPriority": {"type": "integer"},
+    "queuedAt": {"type": "string", "format": "date-time"},
+    "dependencyIds": {"$ref": "#/$defs/uniqueStrings"},
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/claim"}
+    },
+    "quotaCosts": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    }
+  },
+  "$defs": {
+    "uniqueStrings": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain", "access"],
+      "properties": {
+        "domain": {"type": "string", "minLength": 1},
+        "access": {"enum": ["read", "write", "exclusive"]}
+      }
+    }
+  }
+}

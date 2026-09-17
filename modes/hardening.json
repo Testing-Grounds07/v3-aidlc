@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "0.1",
+  "id": "MODE-HARDENING",
+  "version": "1.0.0",
+  "title": "Hardening",
+  "objective": "Close readiness gaps so an existing capability can support its target operating commitment.",
+  "supportedStages": ["release"],
+  "requiredInputs": ["candidate capability", "target readiness profile", "gap assessment"],
+  "roles": [{"name": "actor", "responsibility": "Close approved readiness gaps"}, {"name": "verifier", "responsibility": "Verify target readiness evidence"}],
+  "requiredOutputs": ["resolved gaps", "remaining limitations", "readiness evidence"],
+  "evidence": ["security checks", "recovery checks", "operational checks"],
+  "completionCriteria": ["Mandatory readiness gaps closed", "Remaining limitations accepted or deferred visibly"],
+  "hardControls": ["CTRL-EXACT-REVISION-EVIDENCE", "CTRL-ROLLBACK-OR-RECOVERY"],
+  "attemptBudget": 3,
+  "postureProfiles": {"balanced": {"readinessDepth": "targeted"}, "assured": {"readinessDepth": "comprehensive"}, "emergency": {"followUpRequired": true}},
+  "outcomes": ["accepted_result", "repair_required", "decision_required", "blocked"],
+  "allowedNextModes": []
+}
+

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "0.1",
+  "id": "CHECK-INDEPENDENT-REVIEW",
+  "version": "1.0.0",
+  "title": "Independent semantic review",
+  "method": "semantic_review",
+  "acceptedEvidenceKinds": ["review_disposition"],
+  "minimumEvidence": 1,
+  "maxAgeSeconds": 86400,
+  "requiresDigest": true,
+  "requiresIndependentEvaluator": true
+}

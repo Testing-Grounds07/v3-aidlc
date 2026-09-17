@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "recovery-plan.schema.json",
+  "title": "V3-AIDLC Recovery Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "generatedAt", "verifiedThroughSequence", "steps"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "verifiedThroughSequence": {"type": "integer", "minimum": 0},
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["action", "runId", "leaseId", "reason"],
+        "properties": {
+          "action": {"enum": ["wait_for_lease", "reclaim_and_requeue", "verify_external_effect", "reconcile_completed_run", "reconcile_orphan_run", "escalate_attempt_budget"]},
+          "runId": {"type": "string", "minLength": 1},
+          "leaseId": {"type": ["string", "null"]},
+          "reason": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

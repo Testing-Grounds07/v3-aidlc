@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "0.1",
+  "profileId": "PROFILE-TEAM-01",
+  "profileKind": "team",
+  "description": "Shared development for a trusted team with centralized state and audit history.",
+  "components": ["liaison", "project_lead", "scheduler", "worker", "state", "artifacts", "credential_broker", "telemetry"],
+  "configuration": {
+    "state": {"authority": "state.db", "snapshotAuthority": false, "driver": "managed_sql"},
+    "security": {"allowRawSecrets": false, "verifyProvenance": true, "networkDefault": "allowlist"},
+    "scheduler": {"maxConcurrency": 8},
+    "telemetry": {"enabled": true},
+    "recovery": {"restoreTestsRequired": true}
+  }
+}

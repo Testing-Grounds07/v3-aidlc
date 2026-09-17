@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "event-envelope.schema.json",
+  "title": "V3-AIDLC Durable Event Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "eventId", "projectId", "streamId", "sequence", "eventType", "aggregateType", "aggregateId", "occurredAt", "recordedAt", "actor", "idempotencyKey", "payload", "previousEventHash", "eventHash"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "eventId": {"type": "string", "pattern": "^EVT-"},
+    "projectId": {"type": "string", "minLength": 1},
+    "streamId": {"type": "string", "minLength": 1},
+    "sequence": {"type": "integer", "minimum": 1},
+    "eventType": {"type": "string", "minLength": 1},
+    "aggregateType": {"type": "string", "minLength": 1},
+    "aggregateId": {"type": "string", "minLength": 1},
+    "occurredAt": {"type": "string", "format": "date-time"},
+    "recordedAt": {"type": "string", "format": "date-time"},
+    "actor": {"type": "object", "additionalProperties": false, "required": ["type", "id"], "properties": {"type": {"enum": ["user", "liaison", "project_lead", "agent", "tool", "system"]}, "id": {"type": "string", "minLength": 1}}},
+    "idempotencyKey": {"type": "string", "minLength": 1},
+    "causationId": {"type": "string", "minLength": 1},
+    "correlationId": {"type": "string", "minLength": 1},
+    "payload": {"type": "object"},
+    "previousEventHash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "eventHash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

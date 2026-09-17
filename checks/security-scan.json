@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "0.1",
+  "id": "CHECK-SECURITY-SCAN",
+  "version": "1.0.0",
+  "title": "Security scan",
+  "method": "deterministic",
+  "acceptedEvidenceKinds": ["scan_result"],
+  "minimumEvidence": 1,
+  "maxAgeSeconds": 86400,
+  "requiresDigest": true,
+  "requiresIndependentEvaluator": false
+}

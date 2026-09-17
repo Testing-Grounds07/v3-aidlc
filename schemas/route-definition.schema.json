@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "route-definition.schema.json",
+  "title": "V3-AIDLC Route Definition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "id", "version", "title", "purpose",
+    "defaultPosture", "allowedPostures", "hardControls", "stages",
+    "completionOutcomes"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "id": {"type": "string", "pattern": "^ROUTE-[A-Z0-9-]+$"},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "title": {"type": "string", "minLength": 1},
+    "purpose": {"type": "string", "minLength": 1},
+    "defaultPosture": {"enum": ["explore", "fast", "balanced", "assured", "emergency"]},
+    "allowedPostures": {
+      "type": "array",
+      "items": {"enum": ["explore", "fast", "balanced", "assured", "emergency"]},
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "hardControls": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "modeRules"],
+        "properties": {
+          "id": {"enum": ["discovery", "definition", "design", "implementation", "validation", "release", "operation", "retirement"]},
+          "modeRules": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["modeId", "requirement"],
+              "properties": {
+                "modeId": {"type": "string", "pattern": "^MODE-[A-Z0-9-]+$"},
+                "requirement": {"enum": ["required", "conditional", "optional"]},
+                "whenAll": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["fact"],
+                    "properties": {
+                      "fact": {"type": "string", "minLength": 1},
+                      "equals": {},
+                      "in": {"type": "array", "minItems": 1}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "completionOutcomes": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  }
+}
+

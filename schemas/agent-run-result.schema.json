@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://v3-aidlc.dev/schemas/agent-run-result.schema.json",
+  "title": "Normalized Agent Run Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "runId", "projectId", "workPackageId", "adapterId", "profileDigest", "contextManifestId", "dispatchDigest", "startedAt", "finishedAt", "status", "summary", "artifactIds", "evidenceIds", "satisfiedCriteria", "findingIds", "externalEffects", "usage", "providerResultRef"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "runId": {"type": "string", "minLength": 1},
+    "projectId": {"type": "string", "minLength": 1},
+    "workPackageId": {"type": "string", "minLength": 1},
+    "adapterId": {"type": "string", "minLength": 1},
+    "profileDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "contextManifestId": {"type": "string", "minLength": 1},
+    "dispatchDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "startedAt": {"type": "string", "format": "date-time"},
+    "finishedAt": {"type": "string", "format": "date-time"},
+    "status": {"enum": ["completed", "failed", "blocked", "cancelled"]},
+    "summary": {"type": "string", "minLength": 1},
+    "artifactIds": {"$ref": "#/$defs/uniqueStrings"},
+    "evidenceIds": {"$ref": "#/$defs/uniqueStrings"},
+    "satisfiedCriteria": {"$ref": "#/$defs/uniqueStrings"},
+    "findingIds": {"$ref": "#/$defs/uniqueStrings"},
+    "externalEffects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["effectKey", "effectType", "status", "observationRef"],
+        "properties": {
+          "effectKey": {"type": "string", "minLength": 1},
+          "effectType": {"type": "string", "minLength": 1},
+          "status": {"enum": ["succeeded", "absent", "unknown"]},
+          "observationRef": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inputUnits", "outputUnits"],
+      "properties": {
+        "inputUnits": {"type": "integer", "minimum": 0},
+        "outputUnits": {"type": "integer", "minimum": 0}
+      }
+    },
+    "providerResultRef": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "uniqueStrings": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+  }
+}

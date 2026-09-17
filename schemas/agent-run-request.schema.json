@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://v3-aidlc.dev/schemas/agent-run-request.schema.json",
+  "title": "Agent Run Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "runId", "projectId", "workPackageId", "role", "objective", "contextManifestId", "contextManifestDigest", "contextBytes", "sensitivity", "requiredCapabilities", "requiredModalities", "requiredTools", "requiredNetworkHosts", "structuredOutputRequired", "externalSideEffectPossible", "maxOutputBytes", "completionCriteria", "authorizationDecision", "attempt", "idempotencyKey"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "runId": {"type": "string", "minLength": 1},
+    "projectId": {"type": "string", "minLength": 1},
+    "workPackageId": {"type": "string", "minLength": 1},
+    "role": {"type": "string", "minLength": 1},
+    "objective": {"type": "string", "minLength": 1},
+    "contextManifestId": {"type": "string", "minLength": 1},
+    "contextManifestDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "contextBytes": {"type": "integer", "minimum": 1},
+    "sensitivity": {"enum": ["public", "internal", "confidential", "restricted", "secret"]},
+    "requiredCapabilities": {"$ref": "#/$defs/uniqueStrings"},
+    "requiredModalities": {"$ref": "#/$defs/uniqueStrings"},
+    "requiredTools": {"$ref": "#/$defs/uniqueStrings"},
+    "requiredNetworkHosts": {"$ref": "#/$defs/uniqueStrings"},
+    "structuredOutputRequired": {"type": "boolean"},
+    "externalSideEffectPossible": {"type": "boolean"},
+    "maxOutputBytes": {"type": "integer", "minimum": 1},
+    "completionCriteria": {"$ref": "#/$defs/uniqueStrings"},
+    "authorizationDecision": {"enum": ["auto_proceed", "auto_proceed_and_record", "auto_proceed_within_budget", "user_decision_required", "blocked"]},
+    "attempt": {"type": "integer", "minimum": 1},
+    "idempotencyKey": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "uniqueStrings": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+  }
+}

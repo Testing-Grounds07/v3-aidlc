@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://v3-aidlc.dev/schemas/orchestration-trace.schema.json",
+  "title": "Reference Orchestration Trace",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "scenarioId", "projectId", "status", "activation", "routeId", "stage", "modeIds", "stateRevision", "work", "schedulePlan", "integrationBatch", "integrationStatus", "events", "summary"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "scenarioId": {"type": "string", "minLength": 1},
+    "projectId": {"type": "string", "minLength": 1},
+    "status": {"enum": ["not_managed", "completed", "waiting", "decision_required", "blocked", "failed"]},
+    "activation": {"enum": ["stay_conversational", "start_managed_intake", "attach_existing_project", "clarify_project_identity"]},
+    "routeId": {"type": "string", "minLength": 1},
+    "stage": {"type": "string", "minLength": 1},
+    "modeIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "stateRevision": {"type": "string", "minLength": 1},
+    "work": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["workPackageId", "authorization", "authorizationExplanation", "contextManifestId", "adapterId", "scheduleDecision", "runStatus", "gateOutcome", "reasons"],
+        "properties": {
+          "workPackageId": {"type": "string", "minLength": 1},
+          "authorization": {"type": "string", "minLength": 1},
+          "authorizationExplanation": {"type": "string", "minLength": 1},
+          "contextManifestId": {"type": ["string", "null"]},
+          "adapterId": {"type": ["string", "null"]},
+          "scheduleDecision": {"type": "string", "minLength": 1},
+          "runStatus": {"type": ["string", "null"]},
+          "gateOutcome": {"type": ["string", "null"]},
+          "reasons": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "schedulePlan": {"anyOf": [{"$ref": "schedule-plan.schema.json"}, {"type": "null"}]},
+    "integrationBatch": {"anyOf": [{"$ref": "integration-batch.schema.json"}, {"type": "null"}]},
+    "integrationStatus": {"type": ["string", "null"]},
+    "events": {"type": "array", "items": {"$ref": "event-envelope.schema.json"}},
+    "summary": {"type": "string", "minLength": 1}
+  }
+}

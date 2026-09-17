@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Backup and Restore Policy","type":"object","required":["policyId","dataSet","rpoSeconds","rtoSeconds"],"properties":{"policyId":{"type":"string"},"dataSet":{"type":"string"},"rpoSeconds":{"type":"integer","minimum":0},"rtoSeconds":{"type":"integer","minimum":0}}}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://v3-aidlc.dev/schemas/agent-run-dispatch.schema.json",
+  "title": "Agent Run Dispatch",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "runId", "projectId", "workPackageId", "adapterId", "adapterVersion", "profileId", "profileDigest", "contextManifestId", "contextManifestDigest", "leaseId", "attempt", "idempotencyKey", "requestDigest", "request", "dispatchDigest"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "runId": {"type": "string", "minLength": 1},
+    "projectId": {"type": "string", "minLength": 1},
+    "workPackageId": {"type": "string", "minLength": 1},
+    "adapterId": {"type": "string", "minLength": 1},
+    "adapterVersion": {"type": "string", "minLength": 1},
+    "profileId": {"type": "string", "minLength": 1},
+    "profileDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "contextManifestId": {"type": "string", "minLength": 1},
+    "contextManifestDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "leaseId": {"type": "string", "minLength": 1},
+    "attempt": {"type": "integer", "minimum": 1},
+    "idempotencyKey": {"type": "string", "minLength": 1},
+    "requestDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "request": {"$ref": "agent-run-request.schema.json"},
+    "dispatchDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

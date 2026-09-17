@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://v3-aidlc.dev/schemas/runtime-assembly.schema.json",
+  "title": "V3 Runtime Assembly",
+  "type": "object",
+  "required": ["schemaVersion", "profileId", "profileKind", "configuration", "configurationDigest", "sources"],
+  "properties": {
+    "schemaVersion": {"type": "string", "minLength": 1},
+    "profileId": {"type": "string", "minLength": 1},
+    "profileKind": {"enum": ["local", "team", "hosted", "production"]},
+    "configuration": {"type": "object"},
+    "configurationDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "sources": {
+      "type": "array", "uniqueItems": true,
+      "items": {"enum": ["defaults", "profile", "project", "environment", "command_line"]}
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://v3-aidlc.dev/schemas/startup-report.schema.json",
+  "title": "V3 Startup Report",
+  "type": "object",
+  "required": ["schemaVersion", "runtimeId", "profileId", "configurationDigest", "status", "checks", "startedAt"],
+  "properties": {
+    "schemaVersion": {"type": "string", "minLength": 1},
+    "runtimeId": {"type": "string", "minLength": 1},
+    "profileId": {"type": "string", "minLength": 1},
+    "configurationDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "status": {"enum": ["ready", "not_ready", "inconclusive"]},
+    "checks": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["checkId", "status", "summary"],
+        "properties": {
+          "checkId": {"type": "string", "minLength": 1},
+          "status": {"enum": ["passed", "failed", "inconclusive"]},
+          "summary": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "startedAt": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}

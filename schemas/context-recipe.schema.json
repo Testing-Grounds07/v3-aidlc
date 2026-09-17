@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "context-recipe.schema.json",
+  "title": "V3-AIDLC Context Recipe",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "version", "title", "role", "allowedKinds", "requiredKinds", "allowedSources", "maxSensitivity", "maxItems", "maxBytes", "kindPriority", "toolAllowlist", "networkAllowlist"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "id": {"type": "string", "pattern": "^CONTEXT-[A-Z0-9-]+$"},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "title": {"type": "string", "minLength": 1},
+    "role": {"type": "string", "minLength": 1},
+    "allowedKinds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "requiredKinds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "allowedSources": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "maxSensitivity": {"enum": ["public", "internal", "confidential", "restricted", "secret"]},
+    "maxItems": {"type": "integer", "minimum": 1},
+    "maxBytes": {"type": "integer", "minimum": 1},
+    "kindPriority": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "toolAllowlist": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "networkAllowlist": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+  }
+}

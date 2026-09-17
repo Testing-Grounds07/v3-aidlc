@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "0.1",
+  "projectId": "PRJ-V3-AIDLC",
+  "stateAuthority": "external-sqlite-event-ledger",
+  "snapshotAuthority": false,
+  "frameworkRepository": "Testing-Grounds07/v3-aidlc"
+}
+

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://v3-aidlc.dev/schemas/capability-profile.schema.json",
+  "title": "Capability Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "profileId", "adapterId", "adapterVersion", "provider", "model", "status", "roles", "capabilities", "modalities", "tools", "networkHosts", "maxContextBytes", "maxOutputBytes", "maxConcurrentRuns", "maxSensitivity", "structuredOutput", "streaming", "externalSideEffects", "idempotentInvocation"],
+  "properties": {
+    "schemaVersion": {"const": "0.1"},
+    "profileId": {"type": "string", "minLength": 1},
+    "adapterId": {"type": "string", "minLength": 1},
+    "adapterVersion": {"type": "string", "minLength": 1},
+    "provider": {"type": "string", "minLength": 1},
+    "model": {"type": "string", "minLength": 1},
+    "status": {"enum": ["available", "degraded", "unavailable"]},
+    "roles": {"$ref": "#/$defs/uniqueStrings"},
+    "capabilities": {"$ref": "#/$defs/uniqueStrings"},
+    "modalities": {"$ref": "#/$defs/uniqueStrings"},
+    "tools": {"$ref": "#/$defs/uniqueStrings"},
+    "networkHosts": {"$ref": "#/$defs/uniqueStrings"},
+    "maxContextBytes": {"type": "integer", "minimum": 1},
+    "maxOutputBytes": {"type": "integer", "minimum": 1},
+    "maxConcurrentRuns": {"type": "integer", "minimum": 1},
+    "maxSensitivity": {"enum": ["public", "internal", "confidential", "restricted", "secret"]},
+    "structuredOutput": {"type": "boolean"},
+    "streaming": {"type": "boolean"},
+    "externalSideEffects": {"type": "boolean"},
+    "idempotentInvocation": {"type": "boolean"}
+  },
+  "$defs": {
+    "uniqueStrings": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+  }
+}
