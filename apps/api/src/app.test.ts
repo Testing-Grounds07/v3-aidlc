@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
+import { InMemoryDashboardService } from '@v3/dashboard';
 import { InMemoryDecisionService } from '@v3/governance';
 import { createApp } from './app.js';
 
@@ -42,5 +43,17 @@ describe('API shell', () => {
     await request(createApp({ decisions })).post('/projects/PRJ-1/decisions/DR-1').send({
       id: 'DEC-1', selectedOptionId: 'production', userWords: 'Use production.',
     }).expect(400);
+  });
+
+  it('returns a plain project dashboard snapshot', async () => {
+    const now = new Date('2026-09-17T00:00:00Z');
+    const dashboard = new InMemoryDashboardService([{
+      project: { id: 'PRJ-1', name: 'V3', outcome: 'Adaptive delivery', status: 'active' },
+      summary: { completed: 1, active: 1, waiting: 0, blocked: 0 },
+      work: [{ id: 'WP-1', title: 'Dashboard', workstream: 'Product', stage: 'Implementation', mode: 'Feature development', posture: 'Balanced', status: 'running', progress: 50, summary: 'Building the dashboard', lastUpdatedAt: now }],
+      decisions: [], evidence: { passed: 4, failed: 0, inconclusive: 0, updatedAt: now },
+    }]);
+    const response = await request(createApp({ dashboard })).get('/projects/PRJ-1/dashboard').expect(200);
+    expect(response.body).toMatchObject({ project: { name: 'V3' }, summary: { active: 1 }, evidence: { passed: 4 } });
   });
 });

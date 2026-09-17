@@ -199,4 +199,15 @@ describe.skipIf(!hasDatabase)('ProjectRepository PostgreSQL integration', () => 
     expect(await prisma.decisionRequest.findUnique({ where: { id: 'DR-M7-1' } })).toMatchObject({ status: 'resolved' });
     expect(await prisma.standingDelegation.findUnique({ where: { id: 'DEL-M7-1' } })).toMatchObject({ revocationWords: 'Stop automatic deploys.' });
   });
+
+  it('projects durable project state into the plain dashboard view', async () => {
+    const dashboard = await repository.getDashboard(projectId);
+    expect(dashboard).toMatchObject({
+      project: { id: projectId, name: 'Milestone 1' },
+      summary: { active: 1 },
+      evidence: { passed: 1, failed: 0 },
+    });
+    expect(dashboard?.work[0]).toMatchObject({ id: 'WP-M1-1', stage: 'implementation' });
+    expect(dashboard?.decisions).toHaveLength(0);
+  });
 });

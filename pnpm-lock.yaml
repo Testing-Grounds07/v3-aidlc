@@ -40,6 +40,12 @@ importers:
       '@v3/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@v3/dashboard':
+        specifier: workspace:*
+        version: link:../../packages/dashboard
+      '@v3/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@v3/governance':
         specifier: workspace:*
         version: link:../../packages/governance
@@ -78,6 +84,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@v3/dashboard':
+        specifier: workspace:*
+        version: link:../../packages/dashboard
       '@v3/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -113,11 +122,16 @@ importers:
         specifier: workspace:*
         version: link:../repository
 
+  packages/dashboard: {}
+
   packages/database:
     dependencies:
       '@prisma/client':
         specifier: ^6.15.0
         version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
+      '@v3/dashboard':
+        specifier: workspace:*
+        version: link:../dashboard
       '@v3/domain':
         specifier: workspace:*
         version: link:../domain

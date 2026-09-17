@@ -10,6 +10,7 @@
     "typecheck": "tsc -b --pretty false"
   },
   "dependencies": {
+    "@v3/dashboard": "workspace:*",
     "@v3/shared": "workspace:*",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"

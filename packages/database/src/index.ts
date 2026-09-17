@@ -7,6 +7,7 @@ import {
   type ProjectGraph,
   type WorkPackageStatus as DomainWorkPackageStatus,
 } from '@v3/domain';
+import { summarizeWork, type DashboardService, type ProjectDashboard } from '@v3/dashboard';
 
 import {
   PlanStatus,
@@ -68,7 +69,7 @@ function payloadRecord(payload: Prisma.JsonValue): Record<string, unknown> {
     : { value: payload };
 }
 
-export class ProjectRepository {
+export class ProjectRepository implements DashboardService {
   constructor(private readonly prisma: PrismaClient) {}
 
   async create(input: CreateProjectGraphInput): Promise<ProjectGraph> {
@@ -285,6 +286,43 @@ export class ProjectRepository {
     };
     validateProjectGraph(graph);
     return graph;
+  }
+
+  async getDashboard(projectId: string): Promise<ProjectDashboard | null> {
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId },
+      include: {
+        workPackages: { orderBy: { updatedAt: 'desc' } },
+        evidence: { orderBy: { collectedAt: 'desc' } },
+        decisionRequests: { where: { status: 'pending' }, orderBy: { requestedAt: 'asc' } },
+      },
+    });
+    if (project === null) return null;
+    const progress: Readonly<Record<string, number>> = {
+      PROPOSED: 5, PLANNED: 10, ELIGIBLE: 15, LEASED: 20, RUNNING: 45,
+      EVIDENCE_PENDING: 65, VERIFYING: 75, REVIEWING: 85, REPAIR_REQUIRED: 55,
+      REPLAN_REQUIRED: 20, DECISION_REQUIRED: 50, BLOCKED: 50, ACCEPTED: 95, CLOSED: 100,
+      CANCELLED: 100, SUPERSEDED: 100,
+    };
+    const work = project.workPackages.map((item) => ({
+      id: item.id, title: item.title, workstream: item.workstreamId ?? 'Primary workstream',
+      stage: item.stage, mode: item.modeId ?? 'Standard delivery', posture: item.posture,
+      status: item.status.toLowerCase(), progress: progress[item.status] ?? 0,
+      summary: item.objective, lastUpdatedAt: item.updatedAt,
+    }));
+    const passed = project.evidence.filter(({ assertions }) => assertions.some((value) => value.endsWith(': passed') || value === 'approved')).length;
+    const failed = project.evidence.filter(({ assertions }) => assertions.some((value) => /: (failed|failure|cancelled|timed_out)$/.test(value) || value === 'changes_requested')).length;
+    const inconclusive = Math.max(0, project.evidence.length - passed - failed);
+    return {
+      project: { id: project.id, name: project.name, outcome: project.description, status: project.status.toLowerCase() },
+      summary: summarizeWork(work),
+      work,
+      decisions: project.decisionRequests.map((decision) => ({
+        id: decision.id, headline: decision.headline, question: decision.question, impact: decision.impact,
+        optionCount: Array.isArray(decision.options) ? decision.options.length : 0, requestedAt: decision.requestedAt,
+      })),
+      evidence: { passed, failed, inconclusive, updatedAt: project.evidence[0]?.collectedAt ?? project.updatedAt },
+    };
   }
 
   async transitionWorkPackage(

@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@v3/config": "workspace:*",
+    "@v3/dashboard": "workspace:*",
+    "@v3/database": "workspace:*",
     "@v3/governance": "workspace:*",
     "@v3/shared": "workspace:*",
     "express": "^5.1.0"
