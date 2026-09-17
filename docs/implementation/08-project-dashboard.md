@@ -1,6 +1,6 @@
 # Implementation Milestone 8: Project Dashboard
 
-**Status:** In progress
+**Status:** Complete
 **Date:** 2026-09-17
 
 ## Objective
@@ -33,3 +33,11 @@ Milestone 8 closes when:
 6. The dashboard is responsive and has explicit loading, error, and empty states.
 7. The API projects from durable PostgreSQL state rather than chat history.
 8. Hosted PostgreSQL and the complete TypeScript/Python verification gates pass.
+
+## Verification
+
+The first hosted run exposed a stale test expectation: durable state correctly classified the
+fixture as waiting while the test expected active. The repaired expectation and dashboard path
+passed in GitHub Actions run
+[`35185162767`](https://github.com/Testing-Grounds07/v3-aidlc/actions/runs/35185162767),
+including the PostgreSQL projection test, all builds, and all 191 Python tests.

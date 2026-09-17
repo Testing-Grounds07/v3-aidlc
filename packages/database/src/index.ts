@@ -9,6 +9,7 @@ import {
 } from '@v3/domain';
 import { summarizeWork, type DashboardService, type ProjectDashboard } from '@v3/dashboard';
 import type { ProcessHealthReport as HealthReport, ProcessHealthService } from '@v3/analytics';
+import type { EvaluationResult as ProviderEvaluationResult, ProviderBenchmark as ProviderBenchmarkRecord } from '@v3/evaluations';
 
 import {
   PlanStatus,
@@ -345,6 +346,23 @@ export class ProjectRepository implements DashboardService, ProcessHealthService
       dimensions: report.dimensions as HealthReport['dimensions'], metrics: report.metrics as unknown as HealthReport['metrics'],
       recommendations: report.recommendations,
     };
+  }
+
+  async recordEvaluationResult(input: ProviderEvaluationResult & {
+    readonly id: string; readonly projectId: string; readonly caseVersion: string;
+    readonly contextRevision: string; readonly profileId: string;
+  }): Promise<void> {
+    await this.prisma.evaluationResult.create({
+      data: {
+        ...input,
+        scores: JSON.parse(JSON.stringify(input.scores)) as Prisma.InputJsonValue,
+        failures: [...input.failures],
+      },
+    });
+  }
+
+  async recordProviderBenchmark(input: ProviderBenchmarkRecord & { readonly id: string; readonly projectId: string }): Promise<void> {
+    await this.prisma.providerBenchmark.create({ data: input });
   }
 
   async transitionWorkPackage(

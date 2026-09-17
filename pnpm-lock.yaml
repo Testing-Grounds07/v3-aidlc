@@ -143,8 +143,13 @@ importers:
       '@v3/domain':
         specifier: workspace:*
         version: link:../domain
+      '@v3/evaluations':
+        specifier: workspace:*
+        version: link:../evaluations
 
   packages/domain: {}
+
+  packages/evaluations: {}
 
   packages/github:
     dependencies:

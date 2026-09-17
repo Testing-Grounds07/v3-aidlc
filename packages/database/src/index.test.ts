@@ -229,4 +229,19 @@ describe.skipIf(!hasDatabase)('ProjectRepository PostgreSQL integration', () => 
       projectId, dimensions: { mode: 'feature' }, metrics: { firstPassYield: { status: 'healthy' } },
     });
   });
+
+  it('persists independent evaluation results and comparable provider benchmarks', async () => {
+    await repository.recordEvaluationResult({
+      id: 'EVAL-M10-1', projectId, candidateId: 'CAND-1', caseId: 'CASE-1', caseVersion: '1.0.0',
+      contextRevision: 'ctx-1', profileId: 'PROFILE-A', evaluatorId: 'SCORER-1', evaluatorIndependenceGroup: 'eval-team',
+      scores: [{ dimensionId: 'correctness', score: .9, explanation: 'Passed', evidenceIds: ['EVID-M4-1'] }],
+      weightedScore: .9, passed: true, failures: [], digest: 'f'.repeat(64),
+    });
+    await repository.recordProviderBenchmark({
+      id: 'BENCH-M10-1', projectId, profileId: 'PROFILE-A', taskKind: 'code-change', sampleSize: 10,
+      passRate: .9, meanScore: .88, medianLatencyMs: 500, meanCostMicros: 20, measuredAt: new Date('2026-09-17T00:00:00Z'),
+    });
+    expect(await prisma.evaluationResult.findUnique({ where: { id: 'EVAL-M10-1' } })).toMatchObject({ passed: true, weightedScore: .9 });
+    expect(await prisma.providerBenchmark.findUnique({ where: { id: 'BENCH-M10-1' } })).toMatchObject({ sampleSize: 10, taskKind: 'code-change' });
+  });
 });

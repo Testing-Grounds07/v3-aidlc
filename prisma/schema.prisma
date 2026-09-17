@@ -53,29 +53,31 @@ enum WorkPackageStatus {
 }
 
 model Project {
-  id               String                   @id
-  name             String
-  description      String
-  status           ProjectStatus            @default(ACTIVE)
-  version          Int                      @default(1)
-  createdAt        DateTime                 @default(now())
-  updatedAt        DateTime                 @updatedAt
-  requirements     Requirement[]
-  plans            Plan[]
-  workPackages     WorkPackage[]
-  events           LifecycleEvent[]
-  repositories     RepositoryRegistration[]
-  investigations   Investigation[]
-  agentRuns        AgentRun[]
-  evidence         EvidenceRecord[]
-  gateDecisions    GateDecision[]
-  worktrees        WorktreeSession[]
-  proposals        ChangeProposal[]
-  pullRequests     GitHubPullRequest[]
-  decisionRequests DecisionRequest[]
-  humanDecisions   HumanDecision[]
-  delegations      StandingDelegation[]
-  healthReports    ProcessHealthReport[]
+  id                 String                   @id
+  name               String
+  description        String
+  status             ProjectStatus            @default(ACTIVE)
+  version            Int                      @default(1)
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  requirements       Requirement[]
+  plans              Plan[]
+  workPackages       WorkPackage[]
+  events             LifecycleEvent[]
+  repositories       RepositoryRegistration[]
+  investigations     Investigation[]
+  agentRuns          AgentRun[]
+  evidence           EvidenceRecord[]
+  gateDecisions      GateDecision[]
+  worktrees          WorktreeSession[]
+  proposals          ChangeProposal[]
+  pullRequests       GitHubPullRequest[]
+  decisionRequests   DecisionRequest[]
+  humanDecisions     HumanDecision[]
+  delegations        StandingDelegation[]
+  healthReports      ProcessHealthReport[]
+  evaluationResults  EvaluationResult[]
+  providerBenchmarks ProviderBenchmark[]
 }
 
 model Requirement {
@@ -407,4 +409,45 @@ model ProcessHealthReport {
 
   @@unique([projectId, windowStart, windowEnd, id])
   @@index([projectId, windowEnd])
+}
+
+model EvaluationResult {
+  id                         String   @id
+  projectId                  String
+  project                    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  candidateId                String
+  caseId                     String
+  caseVersion                String
+  contextRevision            String
+  profileId                  String
+  evaluatorId                String
+  evaluatorIndependenceGroup String
+  scores                     Json
+  weightedScore              Float
+  passed                     Boolean
+  failures                   String[]
+  digest                     String
+  createdAt                  DateTime @default(now())
+
+  @@unique([candidateId, evaluatorId])
+  @@index([projectId, createdAt])
+  @@index([profileId, caseId, passed])
+}
+
+model ProviderBenchmark {
+  id              String   @id
+  projectId       String
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  profileId       String
+  taskKind        String
+  sampleSize      Int
+  passRate        Float
+  meanScore       Float
+  medianLatencyMs Float
+  meanCostMicros  Float
+  measuredAt      DateTime
+  createdAt       DateTime @default(now())
+
+  @@index([projectId, taskKind, measuredAt])
+  @@index([profileId, taskKind, measuredAt])
 }

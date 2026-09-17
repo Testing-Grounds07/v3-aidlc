@@ -23,6 +23,7 @@
     "@v3/analytics": "workspace:*",
     "@v3/dashboard": "workspace:*",
     "@v3/domain": "workspace:*",
+    "@v3/evaluations": "workspace:*",
     "@prisma/client": "^6.15.0"
   }
 }
