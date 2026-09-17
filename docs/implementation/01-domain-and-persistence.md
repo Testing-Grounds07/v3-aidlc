@@ -1,6 +1,6 @@
 # Implementation Milestone 1: Domain and Persistence
 
-**Status:** In progress  
+**Status:** Complete  
 **Date:** 2026-09-17
 
 ## Objective
@@ -39,3 +39,10 @@ The richer hash-linked Event Envelope, evidence store, leases, findings, learnin
 planner remain preserved in the Python reference contracts. They move into the TypeScript product
 runtime in later orchestration and verification milestones rather than being partially duplicated
 inside Milestone 1.
+
+## Verification
+
+GitHub Actions run
+[`35181846124`](https://github.com/Testing-Grounds07/v3-aidlc/actions/runs/35181846124)
+passed the full gate, including both PostgreSQL round-trip tests, migration deployment, all
+TypeScript checks and builds, and all 191 Python reference-contract tests.

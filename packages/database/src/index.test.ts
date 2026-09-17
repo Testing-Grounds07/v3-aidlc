@@ -80,4 +80,30 @@ describe.skipIf(!hasDatabase)('ProjectRepository PostgreSQL integration', () => 
       payload: { from: 'planned', to: 'eligible' },
     });
   });
+
+  it('registers a repository and persists a structured investigation reference', async () => {
+    await repository.registerRepository({
+      id: 'REPO-M1-1',
+      projectId,
+      rootPath: '/workspace/v3-aidlc',
+      defaultBranch: 'main',
+      headRevision: 'a'.repeat(40),
+    });
+    await repository.recordInvestigation({
+      id: 'INV-M2-1',
+      projectId,
+      repositoryId: 'REPO-M1-1',
+      task: 'Inspect persistence',
+      artifactPath: 'investigations/abc.json',
+      digest: 'b'.repeat(64),
+      manifest: { relevantFiles: ['prisma/schema.prisma'], contextBytes: 1024 },
+    });
+
+    const investigation = await prisma.investigation.findUniqueOrThrow({ where: { id: 'INV-M2-1' } });
+    expect(investigation).toMatchObject({
+      repositoryId: 'REPO-M1-1',
+      status: 'completed',
+      digest: 'b'.repeat(64),
+    });
+  });
 });

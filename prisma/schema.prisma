@@ -64,6 +64,8 @@ model Project {
   plans        Plan[]
   workPackages WorkPackage[]
   events       LifecycleEvent[]
+  repositories RepositoryRegistration[]
+  investigations Investigation[]
 }
 
 model Requirement {
@@ -152,4 +154,36 @@ model LifecycleEvent {
   @@unique([aggregateType, aggregateId, aggregateVersion])
   @@index([projectId, sequence])
   @@index([aggregateType, aggregateId])
+}
+
+model RepositoryRegistration {
+  id             String          @id
+  projectId      String
+  project        Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  rootPath       String
+  defaultBranch  String
+  headRevision   String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  investigations Investigation[]
+
+  @@unique([projectId, rootPath])
+  @@index([projectId])
+}
+
+model Investigation {
+  id           String                 @id
+  projectId    String
+  project      Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  repositoryId String
+  repository   RepositoryRegistration @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  task         String
+  status       String
+  artifactPath String
+  digest       String
+  manifest     Json
+  createdAt    DateTime               @default(now())
+
+  @@index([projectId, createdAt])
+  @@index([repositoryId, createdAt])
 }

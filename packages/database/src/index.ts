@@ -315,4 +315,49 @@ export class ProjectRepository {
       });
     });
   }
+
+  async registerRepository(input: {
+    readonly id: string;
+    readonly projectId: string;
+    readonly rootPath: string;
+    readonly defaultBranch: string;
+    readonly headRevision: string;
+  }): Promise<void> {
+    await this.prisma.repositoryRegistration.upsert({
+      where: { id: input.id },
+      create: input,
+      update: {
+        rootPath: input.rootPath,
+        defaultBranch: input.defaultBranch,
+        headRevision: input.headRevision,
+      },
+    });
+  }
+
+  async recordInvestigation(input: {
+    readonly id: string;
+    readonly projectId: string;
+    readonly repositoryId: string;
+    readonly task: string;
+    readonly artifactPath: string;
+    readonly digest: string;
+    readonly manifest: Prisma.InputJsonValue;
+  }): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.investigation.create({
+        data: { ...input, status: 'completed' },
+      });
+      await tx.lifecycleEvent.create({
+        data: {
+          id: `EVT-${input.id}-COMPLETED`,
+          projectId: input.projectId,
+          type: 'investigation.completed',
+          aggregateType: 'investigation',
+          aggregateId: input.id,
+          aggregateVersion: 1,
+          payload: { repositoryId: input.repositoryId, digest: input.digest },
+        },
+      });
+    });
+  }
 }
