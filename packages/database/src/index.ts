@@ -8,6 +8,7 @@ import {
   type WorkPackageStatus as DomainWorkPackageStatus,
 } from '@v3/domain';
 import { summarizeWork, type DashboardService, type ProjectDashboard } from '@v3/dashboard';
+import type { ProcessHealthReport as HealthReport, ProcessHealthService } from '@v3/analytics';
 
 import {
   PlanStatus,
@@ -69,7 +70,7 @@ function payloadRecord(payload: Prisma.JsonValue): Record<string, unknown> {
     : { value: payload };
 }
 
-export class ProjectRepository implements DashboardService {
+export class ProjectRepository implements DashboardService, ProcessHealthService {
   constructor(private readonly prisma: PrismaClient) {}
 
   async create(input: CreateProjectGraphInput): Promise<ProjectGraph> {
@@ -322,6 +323,27 @@ export class ProjectRepository implements DashboardService {
         optionCount: Array.isArray(decision.options) ? decision.options.length : 0, requestedAt: decision.requestedAt,
       })),
       evidence: { passed, failed, inconclusive, updatedAt: project.evidence[0]?.collectedAt ?? project.updatedAt },
+    };
+  }
+
+  async recordProcessHealthReport(input: HealthReport & { readonly id: string }): Promise<void> {
+    await this.prisma.processHealthReport.create({
+      data: {
+        id: input.id, projectId: input.projectId, windowStart: input.windowStart, windowEnd: input.windowEnd,
+        dimensions: JSON.parse(JSON.stringify(input.dimensions)) as Prisma.InputJsonValue,
+        metrics: JSON.parse(JSON.stringify(input.metrics)) as Prisma.InputJsonValue,
+        recommendations: [...input.recommendations],
+      },
+    });
+  }
+
+  async getLatest(projectId: string): Promise<HealthReport | null> {
+    const report = await this.prisma.processHealthReport.findFirst({ where: { projectId }, orderBy: { windowEnd: 'desc' } });
+    if (report === null) return null;
+    return {
+      projectId: report.projectId, windowStart: report.windowStart, windowEnd: report.windowEnd,
+      dimensions: report.dimensions as HealthReport['dimensions'], metrics: report.metrics as unknown as HealthReport['metrics'],
+      recommendations: report.recommendations,
     };
   }
 

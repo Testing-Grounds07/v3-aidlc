@@ -75,6 +75,7 @@ model Project {
   decisionRequests DecisionRequest[]
   humanDecisions   HumanDecision[]
   delegations      StandingDelegation[]
+  healthReports    ProcessHealthReport[]
 }
 
 model Requirement {
@@ -391,4 +392,19 @@ model StandingDelegation {
   updatedAt        DateTime  @updatedAt
 
   @@index([projectId, revokedAt, expiresAt])
+}
+
+model ProcessHealthReport {
+  id              String   @id
+  projectId       String
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  windowStart     DateTime
+  windowEnd       DateTime
+  dimensions      Json
+  metrics         Json
+  recommendations String[]
+  createdAt       DateTime @default(now())
+
+  @@unique([projectId, windowStart, windowEnd, id])
+  @@index([projectId, windowEnd])
 }

@@ -37,6 +37,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@v3/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
       '@v3/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -110,6 +113,8 @@ importers:
         specifier: ^7.1.5
         version: 7.3.6(@types/node@24.13.5)(jiti@2.7.0)(tsx@4.23.13)
 
+  packages/analytics: {}
+
   packages/config:
     dependencies:
       zod:
@@ -129,6 +134,9 @@ importers:
       '@prisma/client':
         specifier: ^6.15.0
         version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
+      '@v3/analytics':
+        specifier: workspace:*
+        version: link:../analytics
       '@v3/dashboard':
         specifier: workspace:*
         version: link:../dashboard

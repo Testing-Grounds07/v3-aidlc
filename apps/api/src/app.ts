@@ -1,14 +1,20 @@
 import express, { type Express } from 'express';
+import { InMemoryProcessHealthService, type ProcessHealthService } from '@v3/analytics';
 import { InMemoryDashboardService, type DashboardService } from '@v3/dashboard';
 import { GovernanceError, InMemoryDecisionService, type DecisionService } from '@v3/governance';
 import { healthReport } from '@v3/shared';
 
 export function createApp(
-  options: { readonly decisions?: DecisionService; readonly dashboard?: DashboardService } = {},
+  options: {
+    readonly decisions?: DecisionService;
+    readonly dashboard?: DashboardService;
+    readonly processHealth?: ProcessHealthService;
+  } = {},
 ): Express {
   const app = express();
   const decisions = options.decisions ?? new InMemoryDecisionService();
   const dashboard = options.dashboard ?? new InMemoryDashboardService();
+  const processHealth = options.processHealth ?? new InMemoryProcessHealthService();
   app.disable('x-powered-by');
   app.use(express.json({ limit: '1mb' }));
   app.get('/health', (_request, response) => response.json(healthReport('api')));
@@ -20,6 +26,18 @@ export function createApp(
         return;
       }
       response.json(snapshot);
+    } catch (error) {
+      next(error);
+    }
+  });
+  app.get('/projects/:projectId/process-health', async (request, response, next) => {
+    try {
+      const report = await processHealth.getLatest(request.params.projectId ?? '');
+      if (report === null) {
+        response.status(404).json({ error: 'Process health report not found' });
+        return;
+      }
+      response.json(report);
     } catch (error) {
       next(error);
     }

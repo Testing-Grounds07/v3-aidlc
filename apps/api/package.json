@@ -12,6 +12,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@v3/analytics": "workspace:*",
     "@v3/config": "workspace:*",
     "@v3/dashboard": "workspace:*",
     "@v3/database": "workspace:*",

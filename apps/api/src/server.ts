@@ -4,7 +4,8 @@ import { createApp } from './app.js';
 
 const environment = readEnvironment();
 const database = createDatabaseClient();
-const app = createApp({ dashboard: new ProjectRepository(database) });
+const repository = new ProjectRepository(database);
+const app = createApp({ dashboard: repository, processHealth: repository });
 
 app.listen(environment.V3_API_PORT, '127.0.0.1', () => {
   process.stdout.write(`V3 API listening on http://127.0.0.1:${environment.V3_API_PORT}\n`);

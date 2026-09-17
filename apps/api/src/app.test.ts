@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
+import { InMemoryProcessHealthService } from '@v3/analytics';
 import { InMemoryDashboardService } from '@v3/dashboard';
 import { InMemoryDecisionService } from '@v3/governance';
 import { createApp } from './app.js';
@@ -55,5 +56,23 @@ describe('API shell', () => {
     }]);
     const response = await request(createApp({ dashboard })).get('/projects/PRJ-1/dashboard').expect(200);
     expect(response.body).toMatchObject({ project: { name: 'V3' }, summary: { active: 1 }, evidence: { passed: 4 } });
+  });
+
+  it('returns the latest sample-aware process health report', async () => {
+    const inconclusive = { value: null, unit: 'ratio' as const, sampleSize: 1, status: 'inconclusive' as const, explanation: 'Not enough work.' };
+    const report = {
+      projectId: 'PRJ-1', windowStart: new Date('2026-09-01'), windowEnd: new Date('2026-10-01'), dimensions: {},
+      metrics: {
+        firstPassYield: inconclusive,
+        medianCycleTime: { ...inconclusive, unit: 'milliseconds' as const },
+        repairRate: { ...inconclusive, unit: 'count' as const },
+        medianDecisionWait: { ...inconclusive, unit: 'milliseconds' as const },
+        blockedShare: inconclusive,
+      },
+      recommendations: ['Collect more data.'],
+    };
+    const response = await request(createApp({ processHealth: new InMemoryProcessHealthService([report]) }))
+      .get('/projects/PRJ-1/process-health').expect(200);
+    expect(response.body).toMatchObject({ projectId: 'PRJ-1', metrics: { firstPassYield: { status: 'inconclusive' } } });
   });
 });

@@ -204,10 +204,29 @@ describe.skipIf(!hasDatabase)('ProjectRepository PostgreSQL integration', () => 
     const dashboard = await repository.getDashboard(projectId);
     expect(dashboard).toMatchObject({
       project: { id: projectId, name: 'Milestone 1' },
-      summary: { active: 1 },
+      summary: { waiting: 1 },
       evidence: { passed: 1, failed: 0 },
     });
     expect(dashboard?.work[0]).toMatchObject({ id: 'WP-M1-1', stage: 'implementation' });
     expect(dashboard?.decisions).toHaveLength(0);
+  });
+
+  it('persists and reloads a segmented process health report', async () => {
+    const metric = { value: 0.8, unit: 'ratio' as const, sampleSize: 5, status: 'healthy' as const, explanation: 'Healthy sample.' };
+    await repository.recordProcessHealthReport({
+      id: 'HEALTH-M9-1', projectId, windowStart: new Date('2026-09-01'), windowEnd: new Date('2026-10-01'),
+      dimensions: { mode: 'feature' },
+      metrics: {
+        firstPassYield: metric,
+        medianCycleTime: { ...metric, value: 86_400_000, unit: 'milliseconds' },
+        repairRate: { ...metric, value: 0.2, unit: 'count' },
+        medianDecisionWait: { ...metric, value: 1000, unit: 'milliseconds' },
+        blockedShare: { ...metric, value: 0.05 },
+      },
+      recommendations: [],
+    });
+    expect(await repository.getLatest(projectId)).toMatchObject({
+      projectId, dimensions: { mode: 'feature' }, metrics: { firstPassYield: { status: 'healthy' } },
+    });
   });
 });
