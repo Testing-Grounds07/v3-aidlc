@@ -106,4 +106,28 @@ describe.skipIf(!hasDatabase)('ProjectRepository PostgreSQL integration', () => 
       digest: 'b'.repeat(64),
     });
   });
+
+  it('persists a normalized provider-neutral agent result without raw output', async () => {
+    await repository.recordAgentRun({
+      id: 'RUN-M3-1',
+      projectId,
+      workPackageId: 'WP-M1-1',
+      adapterId: 'codex',
+      profileId: 'PROFILE-CODEX',
+      requestDigest: 'c'.repeat(64),
+      status: 'completed',
+      summary: 'Implemented the bounded change',
+      artifactIds: ['ART-1'],
+      evidenceIds: ['EVD-1'],
+      findingIds: [],
+      satisfiedCriteria: ['AC-M1-1'],
+      usage: { inputTokens: 10, outputTokens: 20 },
+      providerResultRef: 'provider-result://run-m3-1',
+      startedAt: new Date('2026-09-17T00:00:00Z'),
+      finishedAt: new Date('2026-09-17T00:00:01Z'),
+    });
+
+    const run = await prisma.agentRun.findUniqueOrThrow({ where: { id: 'RUN-M3-1' } });
+    expect(run).toMatchObject({ status: 'completed', adapterId: 'codex', evidenceIds: ['EVD-1'] });
+  });
 });

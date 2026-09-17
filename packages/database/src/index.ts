@@ -360,4 +360,50 @@ export class ProjectRepository {
       });
     });
   }
+
+  async recordAgentRun(input: {
+    readonly id: string;
+    readonly projectId: string;
+    readonly workPackageId: string;
+    readonly adapterId: string;
+    readonly profileId: string;
+    readonly requestDigest: string;
+    readonly status: 'completed' | 'failed' | 'blocked' | 'cancelled';
+    readonly summary: string;
+    readonly artifactIds: readonly string[];
+    readonly evidenceIds: readonly string[];
+    readonly findingIds: readonly string[];
+    readonly satisfiedCriteria: readonly string[];
+    readonly usage: Prisma.InputJsonValue;
+    readonly providerResultRef: string;
+    readonly startedAt: Date;
+    readonly finishedAt: Date;
+  }): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.agentRun.create({
+        data: {
+          ...input,
+          artifactIds: [...input.artifactIds],
+          evidenceIds: [...input.evidenceIds],
+          findingIds: [...input.findingIds],
+          satisfiedCriteria: [...input.satisfiedCriteria],
+        },
+      });
+      await tx.lifecycleEvent.create({
+        data: {
+          id: `EVT-${input.id}-${input.status.toUpperCase()}`,
+          projectId: input.projectId,
+          type: `agent-run.${input.status}`,
+          aggregateType: 'agent-run',
+          aggregateId: input.id,
+          aggregateVersion: 1,
+          payload: {
+            workPackageId: input.workPackageId,
+            adapterId: input.adapterId,
+            requestDigest: input.requestDigest,
+          },
+        },
+      });
+    });
+  }
 }

@@ -66,6 +66,7 @@ model Project {
   events       LifecycleEvent[]
   repositories RepositoryRegistration[]
   investigations Investigation[]
+  agentRuns     AgentRun[]
 }
 
 model Requirement {
@@ -133,6 +134,7 @@ model WorkPackage {
   promotionTarget       String?
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
+  agentRuns             AgentRun[]
 
   @@index([projectId])
   @@index([planId])
@@ -186,4 +188,30 @@ model Investigation {
 
   @@index([projectId, createdAt])
   @@index([repositoryId, createdAt])
+}
+
+model AgentRun {
+  id                 String      @id
+  projectId          String
+  project            Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workPackageId      String
+  workPackage        WorkPackage @relation(fields: [workPackageId], references: [id], onDelete: Cascade)
+  adapterId          String
+  profileId          String
+  requestDigest      String
+  status             String
+  summary            String
+  artifactIds        String[]
+  evidenceIds        String[]
+  findingIds         String[]
+  satisfiedCriteria  String[]
+  usage              Json
+  providerResultRef  String
+  startedAt          DateTime
+  finishedAt         DateTime
+  createdAt          DateTime    @default(now())
+
+  @@index([projectId, createdAt])
+  @@index([workPackageId, createdAt])
+  @@index([adapterId, status])
 }

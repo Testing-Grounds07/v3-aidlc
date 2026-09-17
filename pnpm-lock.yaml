@@ -121,6 +121,12 @@ importers:
 
   packages/domain: {}
 
+  packages/providers:
+    dependencies:
+      zod:
+        specifier: ^4.1.5
+        version: 4.6.5
+
   packages/repository: {}
 
   packages/shared: {}
