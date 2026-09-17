@@ -6,10 +6,22 @@ It coordinates persistent project intent, adaptive lifecycle routes, parallel wo
 
 ## Current status
 
-The V3.1 architecture baseline is complete. Implementation is the next phase.
+The V3.1 architecture baseline and implementation Milestones 0–11 are complete.
 
 - Completed packages: `V3.1-ARCH-01` through `V3.1-ARCH-14`
-- Current work: implementation Milestone 0, with the repository foundation implemented and real PostgreSQL migration verification pending
+- Completed implementation: Milestone 0 repository foundation and hosted PostgreSQL verification
+- Completed implementation: Milestone 1 governed domain records, transitions, events, and PostgreSQL reload
+- Completed implementation: Milestone 2 repository intelligence, bounded context, and persisted investigations
+- Completed implementation: Milestone 3 provider-neutral execution, capability negotiation, and normalized Agent Runs
+- Completed implementation: Milestone 4 controlled orchestration, verification, independent review, and bounded repair
+- Completed implementation: Milestone 5 real Git isolation and review-ready change proposals
+- Completed implementation: Milestone 6 GitHub publication and revision-bound CI evidence
+- Completed implementation: Milestone 7 human approval, revocable delegation, and plain-language liaison UX
+- Completed implementation: Milestone 8 responsive project dashboard and durable state projection
+- Completed implementation: Milestone 9 sample-aware process health analytics
+- Completed implementation: Milestone 10 independent provider evaluations and evidence-based routing
+- Completed implementation: Milestone 11 organization and team boundaries, permissions, and quotas
+- Current verification: 59 TypeScript unit/contract tests, 12 hosted PostgreSQL integration tests, all production builds, and 191 Python reference-contract tests
 - Architecture specifications: `docs/architecture/`
 - Governed Routes, Modes, policies, protocols, Checks, Gates, and Context Recipes live in their respective top-level directories.
 - Managed project ID: `PRJ-V3-AIDLC`

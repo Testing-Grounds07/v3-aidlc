@@ -8,21 +8,15 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_USER: v3
-          POSTGRES_PASSWORD: v3
-          POSTGRES_DB: v3_aidlc
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd "pg_isready -U v3 -d v3_aidlc"
-          --health-interval 2s --health-timeout 3s --health-retries 20
     env:
       DATABASE_URL: postgresql://v3:v3@127.0.0.1:5432/v3_aidlc?schema=public
     steps:
       - uses: actions/checkout@v4
+      - name: Start PostgreSQL
+        run: |
+          sudo systemctl start postgresql.service
+          sudo -u postgres psql -c "CREATE USER v3 WITH PASSWORD 'v3';"
+          sudo -u postgres createdb --owner=v3 v3_aidlc
       - uses: pnpm/action-setup@v4
         with: { version: 11.19.0 }
       - uses: actions/setup-node@v4
@@ -31,6 +25,12 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm db:generate
-      - run: pnpm db:migrate
+      - name: Apply database migration
+        run: |
+          for attempt in {1..20}; do
+            pnpm db:migrate && exit 0
+            sleep 2
+          done
+          exit 1
       - run: pnpm verify
       - run: PYTHONPATH=src python -m unittest discover -s tests -q

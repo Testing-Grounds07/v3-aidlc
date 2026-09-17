@@ -37,9 +37,21 @@ importers:
 
   apps/api:
     dependencies:
+      '@v3/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
       '@v3/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@v3/dashboard':
+        specifier: workspace:*
+        version: link:../../packages/dashboard
+      '@v3/database':
+        specifier: workspace:*
+        version: link:../../packages/database
+      '@v3/governance':
+        specifier: workspace:*
+        version: link:../../packages/governance
       '@v3/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -75,6 +87,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@v3/dashboard':
+        specifier: workspace:*
+        version: link:../../packages/dashboard
       '@v3/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -98,21 +113,83 @@ importers:
         specifier: ^7.1.5
         version: 7.3.6(@types/node@24.13.5)(jiti@2.7.0)(tsx@4.23.13)
 
+  packages/analytics: {}
+
   packages/config:
     dependencies:
       zod:
         specifier: ^4.1.5
         version: 4.6.5
 
+  packages/context:
+    dependencies:
+      '@v3/repository':
+        specifier: workspace:*
+        version: link:../repository
+
+  packages/dashboard: {}
+
   packages/database:
     dependencies:
       '@prisma/client':
         specifier: ^6.15.0
         version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
+      '@v3/analytics':
+        specifier: workspace:*
+        version: link:../analytics
+      '@v3/dashboard':
+        specifier: workspace:*
+        version: link:../dashboard
+      '@v3/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@v3/evaluations':
+        specifier: workspace:*
+        version: link:../evaluations
+      '@v3/organizations':
+        specifier: workspace:*
+        version: link:../organizations
 
   packages/domain: {}
 
+  packages/evaluations: {}
+
+  packages/github:
+    dependencies:
+      '@v3/verification':
+        specifier: workspace:*
+        version: link:../verification
+      '@v3/workspace':
+        specifier: workspace:*
+        version: link:../workspace
+
+  packages/governance:
+    dependencies:
+      zod:
+        specifier: ^4.1.5
+        version: 4.6.5
+
+  packages/orchestration:
+    dependencies:
+      '@v3/verification':
+        specifier: workspace:*
+        version: link:../verification
+
+  packages/organizations: {}
+
+  packages/providers:
+    dependencies:
+      zod:
+        specifier: ^4.1.5
+        version: 4.6.5
+
+  packages/repository: {}
+
   packages/shared: {}
+
+  packages/verification: {}
+
+  packages/workspace: {}
 
 packages:
   '@babel/code-frame@7.29.7':
