@@ -244,4 +244,21 @@ describe.skipIf(!hasDatabase)('ProjectRepository PostgreSQL integration', () => 
     expect(await prisma.evaluationResult.findUnique({ where: { id: 'EVAL-M10-1' } })).toMatchObject({ passed: true, weightedScore: .9 });
     expect(await prisma.providerBenchmark.findUnique({ where: { id: 'BENCH-M10-1' } })).toMatchObject({ sampleSize: 10, taskKind: 'code-change' });
   });
+
+  it('isolates a project in an organization team and enforces its quota', async () => {
+    await repository.createOrganization({
+      id: 'ORG-M11-1', name: 'Test Organization', slug: 'test-organization',
+      team: { id: 'TEAM-M11-1', name: 'Delivery Team', slug: 'delivery' },
+    });
+    await repository.assignProjectToTeam({ projectId, organizationId: 'ORG-M11-1', teamId: 'TEAM-M11-1' });
+    await repository.addMembership({
+      id: 'MEM-M11-1', organizationId: 'ORG-M11-1', teamId: 'TEAM-M11-1', principalId: 'USER-1',
+      organizationRole: 'member', teamRole: 'lead', status: 'active',
+    });
+    await repository.setOrganizationQuota({ id: 'QUOTA-M11-1', organizationId: 'ORG-M11-1', dimension: 'parallel-runs', maximum: 2 });
+    await repository.consumeOrganizationQuota('ORG-M11-1', 'parallel-runs', 2);
+    await expect(repository.consumeOrganizationQuota('ORG-M11-1', 'parallel-runs', 1)).rejects.toThrow('quota exceeded');
+    expect(await prisma.project.findUnique({ where: { id: projectId } })).toMatchObject({ organizationId: 'ORG-M11-1', teamId: 'TEAM-M11-1' });
+    expect(await prisma.membership.findUnique({ where: { id: 'MEM-M11-1' } })).toMatchObject({ status: 'active', teamRole: 'lead' });
+  });
 });

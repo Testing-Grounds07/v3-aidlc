@@ -78,6 +78,12 @@ model Project {
   healthReports      ProcessHealthReport[]
   evaluationResults  EvaluationResult[]
   providerBenchmarks ProviderBenchmark[]
+  organizationId     String?
+  organization       Organization?            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  teamId             String?
+  team               Team?                    @relation(fields: [teamId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, teamId])
 }
 
 model Requirement {
@@ -450,4 +456,65 @@ model ProviderBenchmark {
 
   @@index([projectId, taskKind, measuredAt])
   @@index([profileId, taskKind, measuredAt])
+}
+
+model Organization {
+  id          String              @id
+  name        String
+  slug        String              @unique
+  status      String              @default("active")
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  teams       Team[]
+  memberships Membership[]
+  projects    Project[]
+  quotas      OrganizationQuota[]
+}
+
+model Team {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  slug           String
+  status         String       @default("active")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  memberships    Membership[]
+  projects       Project[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId, status])
+}
+
+model Membership {
+  id               String       @id
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  teamId           String?
+  team             Team?        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  principalId      String
+  organizationRole String
+  teamRole         String?
+  status           String       @default("invited")
+  expiresAt        DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@unique([organizationId, teamId, principalId])
+  @@index([principalId, status])
+  @@index([organizationId, teamId, status])
+}
+
+model OrganizationQuota {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  dimension      String
+  maximum        Float
+  used           Float        @default(0)
+  version        Int          @default(1)
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, dimension])
 }

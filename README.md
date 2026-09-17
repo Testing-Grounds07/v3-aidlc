@@ -6,7 +6,7 @@ It coordinates persistent project intent, adaptive lifecycle routes, parallel wo
 
 ## Current status
 
-The V3.1 architecture baseline and implementation Milestones 0–9 are complete. Milestone 10 is active.
+The V3.1 architecture baseline and implementation Milestones 0–10 are complete. Milestone 11 is active.
 
 - Completed packages: `V3.1-ARCH-01` through `V3.1-ARCH-14`
 - Completed implementation: Milestone 0 repository foundation and hosted PostgreSQL verification
@@ -19,7 +19,8 @@ The V3.1 architecture baseline and implementation Milestones 0–9 are complete.
 - Completed implementation: Milestone 7 human approval, revocable delegation, and plain-language liaison UX
 - Completed implementation: Milestone 8 responsive project dashboard and durable state projection
 - Completed implementation: Milestone 9 sample-aware process health analytics
-- Current work: Milestone 10 independent provider evaluations and evidence-based routing
+- Completed implementation: Milestone 10 independent provider evaluations and evidence-based routing
+- Current work: Milestone 11 organization and team boundaries, permissions, and quotas
 - Architecture specifications: `docs/architecture/`
 - Governed Routes, Modes, policies, protocols, Checks, Gates, and Context Recipes live in their respective top-level directories.
 - Managed project ID: `PRJ-V3-AIDLC`

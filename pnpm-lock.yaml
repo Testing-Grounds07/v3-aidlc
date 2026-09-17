@@ -146,6 +146,9 @@ importers:
       '@v3/evaluations':
         specifier: workspace:*
         version: link:../evaluations
+      '@v3/organizations':
+        specifier: workspace:*
+        version: link:../organizations
 
   packages/domain: {}
 
@@ -171,6 +174,8 @@ importers:
       '@v3/verification':
         specifier: workspace:*
         version: link:../verification
+
+  packages/organizations: {}
 
   packages/providers:
     dependencies:

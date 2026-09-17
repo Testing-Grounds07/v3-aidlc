@@ -365,6 +365,55 @@ export class ProjectRepository implements DashboardService, ProcessHealthService
     await this.prisma.providerBenchmark.create({ data: input });
   }
 
+  async createOrganization(input: {
+    readonly id: string; readonly name: string; readonly slug: string;
+    readonly team: { readonly id: string; readonly name: string; readonly slug: string };
+  }): Promise<void> {
+    await this.prisma.organization.create({
+      data: { id: input.id, name: input.name, slug: input.slug, teams: { create: input.team } },
+    });
+  }
+
+  async assignProjectToTeam(input: { readonly projectId: string; readonly organizationId: string; readonly teamId: string }): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      const team = await tx.team.findUniqueOrThrow({ where: { id: input.teamId } });
+      if (team.organizationId !== input.organizationId) throw new Error('Team does not belong to the organization');
+      await tx.project.update({ where: { id: input.projectId }, data: { organizationId: input.organizationId, teamId: input.teamId } });
+    });
+  }
+
+  async addMembership(input: {
+    readonly id: string; readonly organizationId: string; readonly teamId?: string;
+    readonly principalId: string; readonly organizationRole: string; readonly teamRole?: string;
+    readonly status: 'invited' | 'active' | 'suspended' | 'removed'; readonly expiresAt?: Date;
+  }): Promise<void> {
+    if (input.teamId !== undefined) {
+      const team = await this.prisma.team.findUniqueOrThrow({ where: { id: input.teamId } });
+      if (team.organizationId !== input.organizationId) throw new Error('Membership team does not belong to the organization');
+    }
+    await this.prisma.membership.create({ data: input });
+  }
+
+  async setOrganizationQuota(input: {
+    readonly id: string; readonly organizationId: string; readonly dimension: string; readonly maximum: number;
+  }): Promise<void> {
+    if (!Number.isFinite(input.maximum) || input.maximum < 0) throw new Error('Quota maximum must be non-negative');
+    await this.prisma.organizationQuota.create({ data: input });
+  }
+
+  async consumeOrganizationQuota(organizationId: string, dimension: string, amount: number): Promise<void> {
+    if (!Number.isFinite(amount) || amount < 0) throw new Error('Quota consumption must be non-negative');
+    await this.prisma.$transaction(async (tx) => {
+      const quota = await tx.organizationQuota.findUniqueOrThrow({ where: { organizationId_dimension: { organizationId, dimension } } });
+      if (quota.used + amount > quota.maximum) throw new Error(`Organization quota exceeded for ${dimension}`);
+      const updated = await tx.organizationQuota.updateMany({
+        where: { id: quota.id, version: quota.version, used: quota.used },
+        data: { used: { increment: amount }, version: { increment: 1 } },
+      });
+      if (updated.count !== 1) throw new Error('Concurrent quota update detected');
+    });
+  }
+
   async transitionWorkPackage(
     workPackageId: string,
     to: DomainWorkPackageStatus,
